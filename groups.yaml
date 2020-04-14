@@ -1,0 +1,47 @@
+luces_planta_2:
+  name: Luces planta 2
+  entities:
+    - light.luz_escalera_estudio
+    - light.luz_estudio
+
+luces_planta_1:
+  name: Luces planta 1
+  entities:
+    - light.luz_pasillo_1
+    - light.luz_pasillo_2
+    - light.luz_marta
+    - light.luz_bano
+    - light.luz_ducha
+    - light.luz_albert
+    - light.luz_mireia
+
+luces_planta_baja:
+  name: Luces planta baja
+  entities:
+    - light.luz_entrada
+    - light.luz_despacho
+    - light.luz_aseo
+    - light.luz_comedor
+    - light.luz_sofa
+    - light.luz_cocina
+    - light.luz_caldera
+
+luces_parking:
+  name: Luces parking
+  entities:
+    - light.luz_parking
+    - light.luz_escalera_parking
+
+luces_exteriores:
+  name: Luces exteriores
+  entities:
+    - light.luz_exterior
+    - light.luz_jardin
+    - light.luz_terraza
+
+aires:
+  name: Aires
+  entities:
+    - climate.ac_estudio
+    - climate.ac_pasillo
+    - climate.ac_salon

@@ -1,0 +1,377 @@
+- id: '1577693273018'
+  alias: ON radiador planta baja
+  description: Cuando la potencia del derivador esta por encima de 1200W durante un
+    minuto o estamos inyectando mas de 1000W durante un minuto, conecta el radiador
+  trigger:
+  - above: '1000'
+    entity_id: sensor.espurna_8a60cc_power
+    for: 00:01:00
+    platform: numeric_state
+  - above: '1000'
+    entity_id: sensor.fronius_grid_injection
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - alias: ''
+    data: {}
+    entity_id: switch.espurna_c9e37d
+    service: switch.turn_on
+- id: '1577694220426'
+  alias: OFF radiador planta baja
+  description: Apaga el radiador cuando estamos consumiendo mas de 100W de la red
+    durante un minuto y medio
+  trigger:
+  - below: '-100'
+    entity_id: sensor.fronius_grid_injection
+    for: 00:01:30
+    platform: numeric_state
+  condition: []
+  action:
+  - entity_id: switch.espurna_c9e37d
+    service: switch.turn_off
+- id: '1577697891332'
+  alias: On calefactor planta 1
+  description: Cuando la potencia del derivador estÃ¡ por encima de 1200W durante
+    un minuto y medio o estamos inyectando mÃ¡s de 1000W durante un minuto y medio,
+    conecta el calefactor
+  trigger:
+  - above: '1000'
+    entity_id: sensor.fronius_grid_injection
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - entity_id: switch.espurna_553226
+    service: switch.turn_on
+- id: '1577698273045'
+  alias: OFF calefactor planta 1
+  description: Apaga el calefactor cuando estamos consumiendo mas de 100W de la red
+    durante un minuto
+  trigger:
+  - below: '-100'
+    entity_id: sensor.fronius_grid_injection
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - entity_id: switch.espurna_553226
+    service: switch.turn_off
+- id: '1578163364434'
+  alias: ON IQAS
+  description: ON when sun rise +1h
+  trigger:
+  - event: sunrise
+    offset: 01:00:00
+    platform: sun
+  condition: []
+  action:
+  - entity_id: switch.iqas
+    service: switch.turn_on
+- id: '1578163513759'
+  alias: OFF IQAS
+  description: ON when sun set
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - entity_id: switch.iqas
+    service: switch.turn_off
+- id: '1578658322715'
+  alias: Tareas medianoche
+  description: 'Guarda el valor actual de los contadores de energia '
+  trigger:
+  - at: 00:00:00
+    platform: time
+  condition: []
+  action:
+  - data:
+      payload_template: '{"iqas_energy_before_yesterday": "{{ states("sensor.iqas_energy_yesterday")
+        }}"}'
+      retain: true
+      topic: ha/iqas_energy_before_yesterday
+    service: mqtt.publish
+  - data:
+      payload_template: '{"iqas_energy_yesterday": "{{ states("sensor.iqas_energy_today")
+        }}"}'
+      retain: true
+      topic: ha/iqas_energy_yesterday
+    service: mqtt.publish
+  - data:
+      payload_template: '{"iqas_energy_midnight": "{{ states("sensor.iqas_energy")
+        }}"}'
+      retain: true
+      topic: ha/iqas_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"lavadora_energy_midnight": "{{ states("sensor.lavadora_energy")
+        }}"}'
+      retain: true
+      topic: ha/lavadora_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"lavavajillas_energy_midnight": "{{ states("sensor.lavavajillas_energy")
+        }}"}'
+      retain: true
+      topic: ha/lavavajillas_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"secadora_energy_midnight": "{{ states("sensor.secadora_energy")
+        }}"}'
+      retain: true
+      topic: ha/secadora_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"aire_salon_energy_midnight": "{{ states("sensor.aire_salon_energy")
+        }}"}'
+      retain: true
+      topic: ha/aire_salon_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"aire_pasillo_energy_midnight": "{{ states("sensor.aire_pasillo_energy")
+        }}"}'
+      retain: true
+      topic: ha/aire_pasillo_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"aire_estudio_energy_midnight": "{{ states("sensor.aire_estudio_energy")
+        }}"}'
+      retain: true
+      topic: ha/aire_estudio_energy_midnight
+    service: mqtt.publish
+- id: '1578818182228'
+  alias: Notification P>1000W
+  description: Envia un mensaje cuando la potencia de generación es mayor de 1000W
+  trigger:
+  - above: '1000'
+    entity_id: sensor.fronius_solar
+    for: 00:10:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: La potencia de generación es mayor de 1000W
+      parse_mode: markdown
+      target: '217984856'
+      title: '*Home Assistant La Garriga*'
+    service: telegram_bot.send_message
+- id: '1578818269288'
+  alias: Notification energia producida
+  description: Envia un mensaje cuando se pone el sol
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: '{{ states("sensor.fronius_energy_today") }}kWh producidos hoy'
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+- id: '1580035035883'
+  alias: Let's Encrypt Renewal
+  description: ''
+  trigger:
+  - at: 00:00:00
+    platform: time
+  condition: []
+  action:
+  - data:
+      addon: core_letsencrypt
+    service: hassio.addon_restart
+- id: '1582563458741'
+  alias: Lavadora end
+  description: ''
+  trigger:
+  - below: '1'
+    entity_id: sensor.lavadora_power
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: La lavadora ha acabado ({{ states("sensor.lavadora_energy_today") }}kWh)
+      parse_mode: markdown
+      target:
+      - 217984856
+      - 172336226
+    service: telegram_bot.send_message
+- id: '1582563894913'
+  alias: Secadora end
+  description: ''
+  trigger:
+  - below: '5'
+    entity_id: sensor.secadora_power
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: La secadora ha acabado ({{ states("sensor.secadora_energy_today") }}kWh)
+      parse_mode: markdown
+      target:
+      - 217984856
+      - 172336226
+    service: telegram_bot.send_message
+  - entity_id: switch.secadora
+    service: switch.turn_off
+  - entity_id: switch.secadora
+    service: switch.turn_on
+- id: '1582712792069'
+  alias: Lavavajillas end
+  description: ''
+  trigger:
+  - below: '1'
+    entity_id: sensor.lavavajillas_power
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: El lavavajillas ha acabado ({{ states("sensor.lavavajillas_energy_today")
+        }}kWh)
+      parse_mode: markdown
+      target:
+      - 217984856
+      - 172336226
+    service: telegram_bot.send_message
+- id: '1582821448292'
+  alias: Enciende la luz exterior a la puesta del sol
+  description: ''
+  trigger:
+  - event: sunset
+    offset: +01:00:00
+    platform: sun
+  condition: []
+  action:
+  - entity_id: light.luz_exterior
+    service: light.turn_on
+- id: '1582821495402'
+  alias: Apaga la luz exterior a la salida del sol
+  description: ''
+  trigger:
+  - event: sunrise
+    offset: -01:00:00
+    platform: sun
+  condition: []
+  action:
+  - entity_id: light.luz_exterior
+    service: light.turn_off
+- id: '1582831944227'
+  alias: Enciende luz parking
+  description: ''
+  trigger:
+  - entity_id: light.luz_escalera_parking
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - entity_id: light.luz_parking
+    service: light.turn_on
+- id: '1582832045672'
+  alias: Enciende luz escalera parking
+  description: ''
+  trigger:
+  - entity_id: light.luz_parking
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - entity_id: light.luz_escalera_parking
+    service: light.turn_on
+- id: '1583059440450'
+  alias: Secadora start
+  description: ''
+  trigger:
+  - above: '200'
+    entity_id: sensor.secadora_power
+    for: 00:00:30
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: La secadora se ha puesto en marcha
+      parse_mode: markdown
+      target:
+      - 217984856
+    service: telegram_bot.send_message
+  - data:
+      payload_template: '{"secadora_energy_midnight": "{{ states("sensor.secadora_energy")
+        }}"}'
+      retain: true
+      topic: ha/secadora_energy_midnight
+    service: mqtt.publish
+- id: '1583267296672'
+  alias: Lavavajillas start
+  description: ''
+  trigger:
+  - above: '10'
+    entity_id: sensor.lavavajillas_power
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: El lavavajillas se ha puesto en marcha
+      parse_mode: markdown
+      target:
+      - 217984856
+    service: telegram_bot.send_message
+  - data:
+      payload_template: '{"lavavajillas_energy_midnight": "{{ states("sensor.lavavajillas_energy")
+        }}"}'
+      retain: true
+      topic: ha/lavavajillas_energy_midnight
+    service: mqtt.publish
+- id: '1583267422166'
+  alias: Lavadora start
+  description: ''
+  trigger:
+  - above: '10'
+    entity_id: sensor.lavadora_power
+    for: 00:01:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: La lavadora se ha puesto en marcha
+      parse_mode: markdown
+      target:
+      - 217984856
+    service: telegram_bot.send_message
+  - data:
+      payload_template: '{"lavadora_energy_midnight": "{{ states("sensor.lavadora_energy")
+        }}"}'
+      retain: true
+      topic: ha/lavadora_energy_midnight
+    service: mqtt.publish
+- id: '1586774679720'
+  alias: Climate estudio turn off
+  description: ''
+  trigger:
+  - at: '13:00:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: climate.ac_estudio
+    service: climate.turn_off

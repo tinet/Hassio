@@ -1,0 +1,86 @@
+sensor.pwm:
+  friendly_name: Modulación
+sensor.espurna_553226_power:
+  friendly_name: (bw1) Calefactor
+switch.espurna_553226:
+  friendly_name: (bw1) Calefactor
+switch.espurna_8a60cc:
+  friendly_name: (bw2) Derivador IQAS
+switch.espurna_c9e37d:
+  friendly_name: (bw0) Radiador
+sensor.espurna_8a60cc_power:
+  friendly_name: Potencia
+sensor.espurna_c9e37d_power:
+  friendly_name: (bw0) Radiador
+sensor.espurna_8a60cc_energy:
+  friendly_name: Energia
+sensor.energy_yesterday:
+  friendly_name: Energía ayer
+sensor.energy_midnight:
+  friendly_name: Energía medianoche
+sensor.energy_before_yesterday:
+  friendly_name: Energía anteayer
+sensor.espurna_8a60cc_voltage:
+  friendly_name: Voltaje
+sensor.fronius_solar:
+  friendly_name: Producción solar
+sensor.fronius_house_load:
+  friendly_name: Consumo vivienda
+sensor.fronius_energy_today:
+  friendly_name: Energía producida
+sensor.fronius_grid_injection:
+  friendly_name: Inyección
+sensor.fronius_self_consumption:
+  friendly_name: Autoconsumo
+switch.shelly_2_5:
+  friendly_name: Table
+sensor.lavadora_power:
+  friendly_name: Lavadora
+sensor.secadora_power:
+  friendly_name: Secadora
+sensor.lavavajillas_power:
+  friendly_name: Lavavajillas
+sensor.iqas_energy_yesterday:
+  friendly_name: Energía ayer
+sensor.iqas_energy_before_yesterday:
+  friendly_name: Energía anteayer
+sensor.iqas_power:
+  friendly_name: Potencia
+switch.shelly_dimmer:
+  friendly_name: Coach
+sensor.spain_coronavirus_confirmed:
+  attribution: Data provided by Johns Hopkins
+  friendly_name: Spain confirmed
+sensor.spain_coronavirus_current:
+  friendly_name: Spain current
+sensor.spain_coronavirus_deaths:
+  friendly_name: Spain deaths
+sensor.worldwide_coronavirus_confirmed:
+  friendly_name: Worldwide confirmed
+sensor.worldwide_coronavirus_current:
+  friendly_name: Worldwide current
+sensor.worldwide_coronavirus_deaths:
+  friendly_name: Worldwide deaths
+sensor.temperatura_salon:
+  friendly_name: Salón
+sensor.humedad_salon:
+  friendly_name: Salón
+sensor.fronius_dc_voltage:
+  friendly_name: 'Fronius #1'
+  icon: mdi:solar-power
+sensor.fronius_dc_current:
+  friendly_name: Fronius
+sensor.temperatura:
+  friendly_name: Salón
+sensor.humedad:
+  friendly_name: Salón
+sensor.temperatura_estudio:
+  friendly_name: Estudio
+sensor.humedad_estudio:
+  friendly_name: Estudio
+sensor.aire_estudio_power:
+  friendly_name: AC estudio
+sensor.aire_pasillo_power:
+  friendly_name: AC pasillo
+sensor.aire_salon_power:
+  friendly_name: AC salón

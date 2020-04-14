@@ -1,0 +1,42 @@
+on_ac_estudio_frio:
+  alias: ON AC estudio frio 23
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x8800808","DataLSB":"0x10011010","Repeat":0}'
+      topic: cmnd/mando_estudio/irsend
+    service: mqtt.publish
+off_ac_estudio:
+  alias: OFF AC estudio
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
+      topic: cmnd/mando_estudio/irsend
+    service: mqtt.publish
+on_ac_pasillo_frio:
+  alias: ON AC pasillo frio 23
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x8800808","DataLSB":"0x10011010","Repeat":0}'
+      topic: cmnd/mando_pasillo/irsend
+    service: mqtt.publish
+off_ac_pasillo:
+  alias: OFF AC pasillo
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
+      topic: cmnd/mando_pasillo/irsend
+    service: mqtt.publish
+on_ac_salon_frio:
+  alias: ON AC salon frio 23
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x8800808","DataLSB":"0x10011010","Repeat":0}'
+      topic: cmnd/mando_salon/irsend
+    service: mqtt.publish
+off_ac_salon:
+  alias: OFF AC salon
+  sequence:
+  - data:
+      payload: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
+      topic: cmnd/mando_salon/irsend
+    service: mqtt.publish
