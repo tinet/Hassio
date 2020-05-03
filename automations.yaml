@@ -375,3 +375,31 @@
   - data: {}
     entity_id: climate.ac_estudio
     service: climate.turn_off
+- id: '1588340887360'
+  alias: Dropbox Sync backup folder
+  description: ''
+  trigger:
+  - hours: /1
+    platform: time_pattern
+  condition: []
+  action:
+  - data:
+      addon: 7be23ff5_dropbox_sync
+      input:
+        command: upload
+    service: hassio.addon_stdin
+- id: '1588346348707'
+  alias: Snapshot Full Backup and Dropbox Sync
+  description: ''
+  trigger:
+  - at: 03:00:00
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    service: hassio.snapshot_full
+  - data:
+      addon: 7be23ff5_dropbox_sync
+      input:
+        command: upload
+    service: hassio.addon_stdin

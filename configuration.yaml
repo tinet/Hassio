@@ -13,7 +13,6 @@ http:
 # Purgar la base de datos
 recorder:
   purge_keep_days: 15
-  purge_interval: 1
 
 # Text to speech
 tts:
@@ -38,7 +37,7 @@ scene: !include scenes.yaml
 
 logger:
   default: warning
-# logs:  
+#  logs:  
 #    custom_components.fronius_basic: debug
 #    custom_components.fronius_inverter: debug
 #    homeassistant.components.mqtt: debug
@@ -311,11 +310,11 @@ sensor:
 
 
 #------------------------------------------------------  FRONIUS INVERTER  --------------------------------------------------------
-  - platform: fronius_inverter
-    ip_address: 192.168.1.6
-    monitored_conditions:
-      - dc_current
-      - dc_voltage
+#  - platform: fronius_inverter
+#    ip_address: 192.168.1.6
+#    monitored_conditions:
+#      - dc_current
+#      - dc_voltage
     
 
 #---------------------------------------------------------  WIBEEE  ---------------------------------------------------------------

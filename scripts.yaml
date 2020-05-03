@@ -40,3 +40,15 @@ off_ac_salon:
       payload: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
       topic: cmnd/mando_salon/irsend
     service: mqtt.publish
+'1588343995784':
+  alias: Dropbox Sync
+  sequence:
+  - data:
+      addon: 7be23ff5_dropbox_sync
+      input:
+        command: upload
+    service: hassio.addon_stdin
+'1588344665111':
+  alias: Snapshot Full
+  sequence:
+  - service: hassio.snapshot_full
