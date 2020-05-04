@@ -1,0 +1,120 @@
+title: Home
+views:
+  - badges:
+      - entity: sensor.temperatura_salon
+      - entity: sensor.temperatura_estudio
+    cards:
+      - entities:
+          - entity: sensor.fronius_solar
+          - entity: sensor.fronius_energy_today
+          - entity: sensor.fronius_self_consumption
+          - entity: sensor.fronius_grid_injection
+          - entity: sensor.fronius_house_load
+        title: PV
+        type: entities
+      - entities:
+          - entity: sensor.aires_potencia
+          - entity: sensor.aires_energy_today
+          - entity: group.aires
+        title: Aires
+        type: entities
+      - entities:
+          - entity: group.luces_exteriores
+          - entity: group.luces_planta_2
+          - entity: group.luces_planta_1
+          - entity: group.luces_planta_baja
+          - entity: group.luces_parking
+        title: Luces
+        type: entities
+      - entities:
+          - entity: sensor.lavadora_power
+          - entity: sensor.secadora_power
+          - entity: sensor.lavavajillas_power
+          - entity: sensor.lavadora_energy_today
+          - entity: sensor.secadora_energy_today
+          - entity: sensor.lavavajillas_energy_today
+        title: Electrodomésticos
+        type: entities
+      - entities:
+          - entity: switch.iqas
+          - entity: sensor.iqas_power
+          - entity: sensor.iqas_energy_today
+          - entity: sensor.iqas_energy_yesterday
+          - entity: sensor.iqas_energy_before_yesterday
+        title: IQAS
+        type: entities
+      - entity: weather.home
+        type: weather-forecast
+    title: ALL
+  - badges:
+      - entity: sensor.temperatura_salon
+      - entity: sensor.humedad_salon
+    cards:
+      - entity: climate.ac_salon
+        type: thermostat
+      - entities:
+          - entity: sensor.aire_salon_power
+          - entity: sensor.aire_salon_energy_today
+          - entity: switch.ac_salon
+        show_header_toggle: false
+        type: entities
+      - double_tap_action:
+          action: none
+        entity: light.luz_comedor
+        type: light
+      - entity: light.luz_sofa
+        type: light
+      - entities:
+          - entity: light.luz_entrada
+          - entity: light.luz_estudio
+          - entity: light.luz_aseo
+          - entity: switch.extractor_aseo
+          - entity: light.luz_caldera
+          - entity: light.luz_cocina
+        title: Luces
+        type: entities
+    path: pb
+    title: PB
+  - badges: []
+    cards:
+      - entity: climate.ac_pasillo
+        type: thermostat
+      - entities:
+          - entity: sensor.aire_pasillo_power
+          - entity: sensor.aire_pasillo_energy_today
+          - entity: switch.ac_pasillo
+        show_header_toggle: false
+        type: entities
+      - entities:
+          - entity: light.luz_pasillo_1
+          - entity: light.luz_pasillo_2
+          - entity: light.luz_marta
+          - entity: light.luz_bano
+          - entity: switch.extractor_bano
+          - entity: light.luz_ducha
+          - entity: light.luz_albert
+          - entity: light.luz_mireia
+        title: Luces
+        type: entities
+    path: p1
+    title: P1
+  - badges:
+      - entity: sensor.temperatura_estudio
+      - entity: sensor.humedad_estudio
+    cards:
+      - entity: climate.ac_estudio
+        type: thermostat
+      - entities:
+          - entity: sensor.aire_estudio_power
+          - entity: sensor.aire_estudio_energy_today
+          - entity: switch.ac_estudio
+        show_header_toggle: false
+        type: entities
+      - entities:
+          - entity: light.luz_escalera_estudio
+          - entity: light.luz_estudio
+        title: Luces
+        type: entities
+    path: p2
+    title: P2
+
