@@ -13,10 +13,11 @@ views:
         title: PV
         type: entities
       - entities:
+          - entity: sensor.electrodomesticos_potencia
+          - entity: sensor.electrodomesticos_energy_today
           - entity: sensor.aires_potencia
           - entity: sensor.aires_energy_today
-          - entity: group.aires
-        title: Aires
+        title: Consumos
         type: entities
       - entities:
           - entity: group.luces_exteriores
@@ -27,21 +28,19 @@ views:
         title: Luces
         type: entities
       - entities:
-          - entity: sensor.lavadora_power
-          - entity: sensor.secadora_power
-          - entity: sensor.lavavajillas_power
-          - entity: sensor.lavadora_energy_today
-          - entity: sensor.secadora_energy_today
-          - entity: sensor.lavavajillas_energy_today
-        title: Electrodomésticos
-        type: entities
-      - entities:
           - entity: switch.iqas
           - entity: sensor.iqas_power
           - entity: sensor.iqas_energy_today
           - entity: sensor.iqas_energy_yesterday
           - entity: sensor.iqas_energy_before_yesterday
         title: IQAS
+        type: entities
+      - entities:
+          - entity: sensor.spain_coronavirus_current
+          - entity: sensor.spain_coronavirus_deaths
+          - entity: sensor.spain_coronavirus_confirmed
+        show_header_toggle: false
+        title: Covid-19
         type: entities
       - entity: weather.home
         type: weather-forecast
@@ -72,6 +71,15 @@ views:
           - entity: light.luz_caldera
           - entity: light.luz_cocina
         title: Luces
+        type: entities
+      - entities:
+          - entity: sensor.lavadora_power
+          - entity: sensor.secadora_power
+          - entity: sensor.lavavajillas_power
+          - entity: sensor.lavadora_energy_today
+          - entity: sensor.secadora_energy_today
+          - entity: sensor.lavavajillas_energy_today
+        title: Electrodomésticos
         type: entities
     path: pb
     title: PB
