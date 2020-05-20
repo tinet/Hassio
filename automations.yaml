@@ -365,16 +365,28 @@
       topic: ha/lavadora_energy_midnight
     service: mqtt.publish
 - id: '1586774679720'
-  alias: Climate estudio turn off
-  description: ''
+  alias: Climate Pasillo turn off
+  description: Apaga el AC cuando estamos más de 10 minutos gastando mas de 1000W
   trigger:
-  - at: '13:00:00'
-    platform: time
-  condition: []
+  - below: '-1000'
+    entity_id: sensor.fronius_grid_injection
+    for: 00:10:00
+    platform: numeric_state
+  condition:
+  - after: '13:00:00'
+    before: '23:00:00'
+    condition: time
   action:
   - data: {}
-    entity_id: climate.ac_estudio
+    entity_id: climate.ac_pasillo
     service: climate.turn_off
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: Apagado AC pasillo por consumo continuado de la red
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
 - id: '1588340887360'
   alias: Dropbox Sync backup folder
   description: ''
