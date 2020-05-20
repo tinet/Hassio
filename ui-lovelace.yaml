@@ -1,4 +1,4 @@
-title: Home
+title: La Garriga
 views:
   - badges:
       - entity: sensor.temperatura_salon
@@ -28,14 +28,6 @@ views:
         title: Luces
         type: entities
       - entities:
-          - entity: switch.iqas
-          - entity: sensor.iqas_power
-          - entity: sensor.iqas_energy_today
-          - entity: sensor.iqas_energy_yesterday
-          - entity: sensor.iqas_energy_before_yesterday
-        title: IQAS
-        type: entities
-      - entities:
           - entity: sensor.spain_coronavirus_current
           - entity: sensor.spain_coronavirus_deaths
           - entity: sensor.spain_coronavirus_confirmed
@@ -54,7 +46,6 @@ views:
       - entities:
           - entity: sensor.aire_salon_power
           - entity: sensor.aire_salon_energy_today
-          - entity: switch.ac_salon
         show_header_toggle: false
         type: entities
       - double_tap_action:
@@ -90,7 +81,6 @@ views:
       - entities:
           - entity: sensor.aire_pasillo_power
           - entity: sensor.aire_pasillo_energy_today
-          - entity: switch.ac_pasillo
         show_header_toggle: false
         type: entities
       - entities:
@@ -115,13 +105,20 @@ views:
       - entities:
           - entity: sensor.aire_estudio_power
           - entity: sensor.aire_estudio_energy_today
-          - entity: switch.ac_estudio
         show_header_toggle: false
         type: entities
       - entities:
           - entity: light.luz_escalera_estudio
           - entity: light.luz_estudio
         title: Luces
+        type: entities
+      - entities:
+          - entity: switch.iqas
+          - entity: sensor.iqas_power
+          - entity: sensor.iqas_energy_today
+          - entity: sensor.iqas_energy_yesterday
+          - entity: sensor.iqas_energy_before_yesterday
+        title: IQAS
         type: entities
     path: p2
     title: P2
