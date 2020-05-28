@@ -59,10 +59,9 @@
     service: switch.turn_off
 - id: '1578163364434'
   alias: ON IQAS
-  description: ON when sun rise +1h
+  description: ON when sun rise
   trigger:
   - event: sunrise
-    offset: 01:00:00
     platform: sun
   condition: []
   action:
@@ -376,6 +375,9 @@
   - after: '13:00:00'
     before: '23:00:00'
     condition: time
+  - above: '8'
+    condition: numeric_state
+    entity_id: sensor.aire_pasillo_power
   action:
   - data: {}
     entity_id: climate.ac_pasillo

@@ -95,7 +95,8 @@ telegram_bot:
 #--------------------------------------------------------------------------------------------------------------------------------
 
 smartir:
-
+    update_branch: rc
+    
 climate:
   - platform: smartir
     name: AC estudio
@@ -109,8 +110,8 @@ climate:
     name: AC pasillo
     device_code: 1065
     controller_data: cmnd/mando_pasillo/irsend
-#    temperature_sensor: sensor.temperatura_pasillo
-#    humidity_sensor: sensor.humedad_pasillo
+    temperature_sensor: sensor.temperatura_pasillo
+    humidity_sensor: sensor.humedad_pasillo
     power_sensor: binary_sensor.ac_pasillo_power
 
   - platform: smartir
@@ -483,6 +484,29 @@ sensor:
   - platform: mqtt
     name: Humedad salón
     state_topic: sonoff-th16/humidity
+    unit_of_measurement: '%'
+
+
+#-------------------------------------------------------  DHT-11 --------------------------------------------------------------
+
+  - platform: mqtt
+    name: Temperatura pasillo
+    state_topic: dht11_pasillo/temperature
+    unit_of_measurement: °C
+ 
+  - platform: mqtt
+    name: Humedad pasillo
+    state_topic: dht11_pasillo/humidity
+    unit_of_measurement: '%'
+
+  - platform: mqtt
+    name: Temperatura parking
+    state_topic: dht11_parking/temperature
+    unit_of_measurement: °C
+ 
+  - platform: mqtt
+    name: Humedad parking
+    state_topic: dht11_parking/humidity
     unit_of_measurement: '%'
 
 

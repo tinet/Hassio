@@ -84,3 +84,7 @@ sensor.aire_pasillo_power:
   friendly_name: AC pasillo
 sensor.aire_salon_power:
   friendly_name: AC salón
+sensor.temperatura_pasillo:
+  friendly_name: Pasillo
+sensor.humedad_pasillo:
+  friendly_name: Pasillo
