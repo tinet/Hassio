@@ -1,8 +1,12 @@
 title: La Garriga
 views:
-  - badges:
+  - title: ALL
+    badges:
       - entity: sensor.temperatura_salon
+      - entity: sensor.temperatura_pasillo
       - entity: sensor.temperatura_estudio
+      - entity: sensor.temperatura_jardin
+      - entity: sensor.humedad_jardin
     cards:
       - entities:
           - entity: sensor.fronius_solar
@@ -13,10 +17,10 @@ views:
         title: PV
         type: entities
       - entities:
-          - entity: sensor.electrodomesticos_potencia
-          - entity: sensor.electrodomesticos_energy_today
           - entity: sensor.aires_potencia
+          - entity: sensor.electrodomesticos_potencia
           - entity: sensor.aires_energy_today
+          - entity: sensor.electrodomesticos_energy_today
         title: Consumos
         type: entities
       - entities:
@@ -36,7 +40,6 @@ views:
         type: entities
       - entity: weather.home
         type: weather-forecast
-    title: ALL
   - badges:
       - entity: sensor.temperatura_salon
       - entity: sensor.humedad_salon
@@ -74,7 +77,9 @@ views:
         type: entities
     path: pb
     title: PB
-  - badges: []
+  - badges:
+      - entity: sensor.temperatura_pasillo
+      - entity: sensor.humedad_pasillo
     cards:
       - entity: climate.ac_pasillo
         type: thermostat
