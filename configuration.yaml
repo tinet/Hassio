@@ -273,9 +273,9 @@ switch:
 
 # Sonoff TH16
   - platform: mqtt
-    name: sonoff_th16
-    state_topic: sonoff-th16/relay/0
-    command_topic: sonoff-th16/relay/0/set
+    name: Interruptor Jardín
+    state_topic: sonoff_jardin/relay/0
+    command_topic: sonoff_jardin/relay/0/set
     payload_on: 1
     payload_off: 0
     availability_topic: sonoff-th16/status
@@ -477,13 +477,13 @@ sensor:
 #-------------------------------------------------------  SONOFF --------------------------------------------------------------
 
   - platform: mqtt
-    name: Temperatura salón
-    state_topic: sonoff-th16/temperature
+    name: Temperatura jardín
+    state_topic: sonoff_jardin/temperature
     unit_of_measurement: °C
  
   - platform: mqtt
-    name: Humedad salón
-    state_topic: sonoff-th16/humidity
+    name: Humedad jardín
+    state_topic: sonoff_jardin/humidity
     unit_of_measurement: '%'
 
 
@@ -500,13 +500,13 @@ sensor:
     unit_of_measurement: '%'
 
   - platform: mqtt
-    name: Temperatura parking
-    state_topic: dht11_parking/temperature
+    name: Temperatura salón
+    state_topic: dht11_salon/temperature
     unit_of_measurement: °C
  
   - platform: mqtt
-    name: Humedad parking
-    state_topic: dht11_parking/humidity
+    name: Humedad salón
+    state_topic: dht11_salon/humidity
     unit_of_measurement: '%'
 
 

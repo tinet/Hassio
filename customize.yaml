@@ -88,3 +88,11 @@ sensor.temperatura_pasillo:
   friendly_name: Pasillo
 sensor.humedad_pasillo:
   friendly_name: Pasillo
+sensor.temperatura_parking:
+  friendly_name: Parking
+sensor.humedad_parking:
+  friendly_name: Parking
+sensor.temperatura_jardin:
+  friendly_name: Jardín
+sensor.humedad_jardin:
+  friendly_name: Jardín
