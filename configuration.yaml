@@ -347,18 +347,18 @@ sensor:
 
 
 # Shelly h&T
-  - platform: mqtt
-    name: Temperatura estudio
-    state_topic: shellies/shelly_ht/sensor/temperature
-    unit_of_measurement: °C
-  - platform: mqtt
-    name: Humedad estudio
-    state_topic: shellies/shelly_ht/sensor/humidity
-    unit_of_measurement: '%'
-  - platform: mqtt
-    name: Bateria HT
-    state_topic: shellies/shelly_ht/sensor/battery
-    unit_of_measurement: '%'
+#  - platform: mqtt
+#    name: Temperatura estudio
+#    state_topic: shellies/shelly_ht/sensor/temperature
+#    unit_of_measurement: °C
+#  - platform: mqtt
+#    name: Humedad estudio
+#    state_topic: shellies/shelly_ht/sensor/humidity
+#    unit_of_measurement: '%'
+#  - platform: mqtt
+#    name: Bateria HT
+#    state_topic: shellies/shelly_ht/sensor/battery
+#    unit_of_measurement: '%'
 
 
 #------------------------------------------------------  BLITZWOLF  ------------------------------------------------------------
@@ -487,26 +487,36 @@ sensor:
     unit_of_measurement: '%'
 
 
-#-------------------------------------------------------  DHT-11 --------------------------------------------------------------
+#-------------------------------------------------------  DHT-22 --------------------------------------------------------------
+
+  - platform: mqtt
+    name: Temperatura estudio
+    state_topic: dht22_estudio/temperature
+    unit_of_measurement: °C
+ 
+  - platform: mqtt
+    name: Humedad estudio
+    state_topic: dht22_estudio/humidity
+    unit_of_measurement: '%'
 
   - platform: mqtt
     name: Temperatura pasillo
-    state_topic: dht11_pasillo/temperature
+    state_topic: dht22_pasillo/temperature
     unit_of_measurement: °C
  
   - platform: mqtt
     name: Humedad pasillo
-    state_topic: dht11_pasillo/humidity
+    state_topic: dht22_pasillo/humidity
     unit_of_measurement: '%'
 
   - platform: mqtt
     name: Temperatura salón
-    state_topic: dht11_salon/temperature
+    state_topic: dht22_salon/temperature
     unit_of_measurement: °C
  
   - platform: mqtt
     name: Humedad salón
-    state_topic: dht11_salon/humidity
+    state_topic: dht22_salon/humidity
     unit_of_measurement: '%'
 
 
