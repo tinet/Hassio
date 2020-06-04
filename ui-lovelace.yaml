@@ -1,7 +1,6 @@
 title: La Garriga
 views:
-  - title: ALL
-    badges:
+  - badges:
       - entity: sensor.temperatura_salon
       - entity: sensor.temperatura_pasillo
       - entity: sensor.temperatura_estudio
@@ -40,6 +39,7 @@ views:
         type: entities
       - entity: weather.home
         type: weather-forecast
+    title: ALL
   - badges:
       - entity: sensor.temperatura_salon
       - entity: sensor.humedad_salon
