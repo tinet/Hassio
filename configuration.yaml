@@ -488,26 +488,27 @@ sensor:
 
 
 #-------------------------------------------------------  DHT-22 --------------------------------------------------------------
+#  *** Changed to ESPHome ***
 
-  - platform: mqtt
-    name: Temperatura estudio
-    state_topic: dht22_estudio/temperature
-    unit_of_measurement: °C
+#  - platform: mqtt
+#    name: Temperatura estudio
+#    state_topic: dht22_estudio/temperature
+#    unit_of_measurement: °C
  
-  - platform: mqtt
-    name: Humedad estudio
-    state_topic: dht22_estudio/humidity
-    unit_of_measurement: '%'
+#  - platform: mqtt
+#    name: Humedad estudio
+#    state_topic: dht22_estudio/humidity
+#    unit_of_measurement: '%'
 
-  - platform: mqtt
-    name: Temperatura pasillo
-    state_topic: dht22_pasillo/temperature
-    unit_of_measurement: °C
+#  - platform: mqtt
+#    name: Temperatura pasillo
+#    state_topic: dht22_pasillo/temperature
+#    unit_of_measurement: °C
  
-  - platform: mqtt
-    name: Humedad pasillo
-    state_topic: dht22_pasillo/humidity
-    unit_of_measurement: '%'
+#  - platform: mqtt
+#    name: Humedad pasillo
+#    state_topic: dht22_pasillo/humidity
+#    unit_of_measurement: '%'
 
   - platform: mqtt
     name: Temperatura salón
