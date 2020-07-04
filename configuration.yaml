@@ -148,53 +148,16 @@ switch:
 
 #--------------------------------------------------------  AIRES  --------------------------------------------------------------
 # Estudio
-  - platform: template
-    switches:
-      ac_estudio:
-        value_template: >-
-          {% if states('sensor.aire_estudio_power') | float > 8 %}
-            true
-          {% else %}
-            false
-          {% endif %}
-        turn_on:
-#          service: script.on_ac_estudio_frio
-        turn_off:
-          service: script.off_ac_estudio
-        friendly_name: 'AC estudio'
+  - platform: mqtt
+    name: aire_estudio
+    state_topic: aire_estudio/relay/0
+    command_topic: aire_estudio/relay/0/set
+    payload_on: 1
+    payload_off: 0
+    availability_topic: aire_estudio/status
+    payload_available: 1
+    payload_not_available: 0
 
-# Pasillo
-  - platform: template
-    switches:
-      ac_pasillo:
-        value_template: >-
-          {% if states('sensor.aire_pasillo_power') | float > 8 %}
-            true
-          {% else %}
-            false
-          {% endif %}
-        turn_on:
-#          service: script.on_ac_pasillo_frio
-        turn_off:
-          service: script.off_ac_pasillo
-        friendly_name: 'AC pasillo'
-
-# Salon
-  - platform: template
-    switches:
-      ac_salon:
-        value_template: >-
-          {% if states('sensor.aire_salon_power') | float > 8 %}
-            true
-          {% else %}
-            false
-          {% endif %}
-        turn_on:
-#          service: script.on_ac_salon_frio
-        turn_off:
-          service: script.off_ac_salon
-        friendly_name: 'AC salon'
-      
 # Tasmota IR
 #  - platform: mqtt
 #    name: Bomba calor salón

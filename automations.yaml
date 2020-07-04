@@ -364,7 +364,7 @@
       topic: ha/lavadora_energy_midnight
     service: mqtt.publish
 - id: '1586774679720'
-  alias: Climate Pasillo turn off
+  alias: Climate Pasillo turn off horario pico
   description: Apaga el AC cuando estamos más de 10 minutos gastando mas de 1000W
   trigger:
   - below: '-1000'
@@ -417,3 +417,50 @@
       input:
         command: upload
     service: hassio.addon_stdin
+- id: '1593847624658'
+  alias: Climate pasillo turn off madrugada
+  description: Apaga el aire pasillo en la madrugada
+  trigger:
+  - above: '8'
+    entity_id: sensor.aire_pasillo_power
+    for: 00:10:00
+    platform: numeric_state
+  condition:
+  - after: 04:00
+    before: 09:00
+    condition: time
+  action:
+  - data: {}
+    entity_id: climate.ac_pasillo
+    service: climate.turn_off
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: Apagado AC pasillo en la madrugada
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+- id: '1593862762524'
+  alias: Climate pasillo temperature 24
+  description: ''
+  trigger:
+  - minutes: /30
+    platform: time_pattern
+  condition:
+  - above: '8'
+    condition: numeric_state
+    entity_id: sensor.aire_pasillo_power
+  - after: 00:00:00
+    before: '23:59:59'
+    condition: time
+  action:
+  - data:
+      temperature: 24
+    service: climate.set_temperature
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: Temperatura AC pasillo 24 grados
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
