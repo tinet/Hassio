@@ -110,6 +110,7 @@ views:
       - entities:
           - entity: sensor.aire_estudio_power
           - entity: sensor.aire_estudio_energy_today
+          - entity: switch.aire_estudio
         show_header_toggle: false
         type: entities
       - entities:
