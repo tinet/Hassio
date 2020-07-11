@@ -418,17 +418,18 @@
         command: upload
     service: hassio.addon_stdin
 - id: '1593847624658'
-  alias: Climate pasillo turn off madrugada
-  description: Apaga el aire pasillo en la madrugada
+  alias: Aire Pasillo Off
+  description: ''
   trigger:
-  - above: '8'
-    entity_id: sensor.aire_pasillo_power
-    for: 00:10:00
-    platform: numeric_state
+  - minutes: /30
+    platform: time_pattern
   condition:
-  - after: 04:00
-    before: 09:00
+  - after: 04:50
+    before: '10:01'
     condition: time
+  - above: '5'
+    condition: numeric_state
+    entity_id: sensor.aire_pasillo_power
   action:
   - data: {}
     entity_id: climate.ac_pasillo
@@ -436,31 +437,140 @@
   - data:
       disable_notification: false
       disable_web_page_preview: true
-      message: Apagado AC pasillo en la madrugada
+      message: AC pasillo apagado
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
 - id: '1593862762524'
-  alias: Climate pasillo temperature 24
+  alias: Aire Pasillo 25 grados
   description: ''
   trigger:
   - minutes: /30
     platform: time_pattern
   condition:
-  - above: '8'
+  - above: '5'
     condition: numeric_state
     entity_id: sensor.aire_pasillo_power
-  - after: 00:00:00
-    before: '23:59:59'
+  - after: 00:00
+    before: '23:59'
     condition: time
   action:
   - data:
+      temperature: 25
+    entity_id: climate.ac_pasillo
+    service: climate.set_temperature
+- id: '1594241655771'
+  alias: Aire Salon Off
+  description: ''
+  trigger:
+  - minutes: /30
+    platform: time_pattern
+  condition:
+  - after: 00:00
+    before: '10:01'
+    condition: time
+  - above: '5'
+    condition: numeric_state
+    entity_id: sensor.aire_salon_power
+  action:
+  - data: {}
+    entity_id: climate.ac_salon
+    service: climate.turn_off
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: AC salon apagado
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+- id: '1594280003047'
+  alias: Aire Estudio Workaround
+  description: ''
+  trigger:
+  - minutes: /5
+    platform: time_pattern
+  condition:
+  - condition: state
+    entity_id: climate.ac_estudio
+    state: cool
+  - below: '5'
+    condition: numeric_state
+    entity_id: sensor.aire_estudio_power
+  action:
+  - data: {}
+    entity_id: climate.ac_estudio
+    service: climate.turn_off
+  - data: {}
+    entity_id: switch.aire_estudio
+    service: switch.turn_off
+  - delay: 00:04
+  - data: {}
+    entity_id: switch.aire_estudio
+    service: switch.turn_on
+  - delay: 00:00:30
+  - data: {}
+    entity_id: climate.ac_estudio
+    service: climate.turn_on
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: AC estudio reboot
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+- id: '1594458633191'
+  alias: Aire Salon is ON?
+  description: ''
+  trigger:
+  - minutes: /5
+    platform: time_pattern
+  condition:
+  - condition: state
+    entity_id: climate.ac_salon
+    state: 'off'
+  - above: '5'
+    condition: numeric_state
+    entity_id: sensor.aire_salon_power
+  action:
+  - data: {}
+    entity_id: climate.ac_salon
+    service: climate.turn_on
+  - data:
       temperature: 24
+    entity_id: climate.ac_salon
     service: climate.set_temperature
   - data:
       disable_notification: false
       disable_web_page_preview: true
-      message: Temperatura AC pasillo 24 grados
+      message: AC salon encendido con el mando
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+- id: '1594458633192'
+  alias: Aire Pasillo is ON?
+  description: ''
+  trigger:
+  - minutes: /5
+    platform: time_pattern
+  condition:
+  - condition: state
+    entity_id: climate.ac_pasillo
+    state: 'off'
+  - above: '5'
+    condition: numeric_state
+    entity_id: sensor.aire_pasillo_power
+  action:
+  - data: {}
+    entity_id: climate.ac_pasillo
+    service: climate.turn_on
+  - data:
+      temperature: 25
+    entity_id: climate.ac_pasillo
+    service: climate.set_temperature
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: AC pasillo encendido con el mando
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
