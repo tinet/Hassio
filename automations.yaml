@@ -424,15 +424,15 @@
   - minutes: /30
     platform: time_pattern
   condition:
-  - after: 04:50
-    before: '10:01'
+  - after: 07:50
+    before: '11:00'
     condition: time
   - above: '5'
     condition: numeric_state
     entity_id: sensor.aire_pasillo_power
   action:
   - data: {}
-    entity_id: climate.ac_pasillo
+    entity_id: climate.aire_pasillo
     service: climate.turn_off
   - data:
       disable_notification: false
@@ -445,19 +445,19 @@
   alias: Aire Pasillo 25 grados
   description: ''
   trigger:
-  - minutes: /30
+  - minutes: /60
     platform: time_pattern
   condition:
   - above: '5'
     condition: numeric_state
     entity_id: sensor.aire_pasillo_power
   - after: 00:00
-    before: '23:59'
+    before: '10:00'
     condition: time
   action:
   - data:
       temperature: 25
-    entity_id: climate.ac_pasillo
+    entity_id: climate.aire_pasillo
     service: climate.set_temperature
 - id: '1594241655771'
   alias: Aire Salon Off
@@ -467,14 +467,14 @@
     platform: time_pattern
   condition:
   - after: 00:00
-    before: '10:01'
+    before: 06:01
     condition: time
   - above: '5'
     condition: numeric_state
     entity_id: sensor.aire_salon_power
   action:
   - data: {}
-    entity_id: climate.ac_salon
+    entity_id: climate.aire_salon
     service: climate.turn_off
   - data:
       disable_notification: false
@@ -491,25 +491,25 @@
     platform: time_pattern
   condition:
   - condition: state
-    entity_id: climate.ac_estudio
+    entity_id: climate.aire_estudio
     state: cool
   - below: '5'
     condition: numeric_state
     entity_id: sensor.aire_estudio_power
   action:
   - data: {}
-    entity_id: climate.ac_estudio
+    entity_id: climate.aire_estudio
     service: climate.turn_off
   - data: {}
     entity_id: switch.aire_estudio
     service: switch.turn_off
-  - delay: 00:04
+  - delay: 00:01
   - data: {}
     entity_id: switch.aire_estudio
     service: switch.turn_on
   - delay: 00:00:30
   - data: {}
-    entity_id: climate.ac_estudio
+    entity_id: climate.aire_estudio
     service: climate.turn_on
   - data:
       disable_notification: false
@@ -526,18 +526,18 @@
     platform: time_pattern
   condition:
   - condition: state
-    entity_id: climate.ac_salon
+    entity_id: climate.aire_salon
     state: 'off'
-  - above: '5'
+  - above: '100'
     condition: numeric_state
     entity_id: sensor.aire_salon_power
   action:
   - data: {}
-    entity_id: climate.ac_salon
+    entity_id: climate.aire_salon
     service: climate.turn_on
   - data:
       temperature: 24
-    entity_id: climate.ac_salon
+    entity_id: climate.aire_salon
     service: climate.set_temperature
   - data:
       disable_notification: false
@@ -554,18 +554,18 @@
     platform: time_pattern
   condition:
   - condition: state
-    entity_id: climate.ac_pasillo
+    entity_id: climate.aire_pasillo
     state: 'off'
-  - above: '5'
+  - above: '100'
     condition: numeric_state
     entity_id: sensor.aire_pasillo_power
   action:
   - data: {}
-    entity_id: climate.ac_pasillo
+    entity_id: climate.aire_pasillo
     service: climate.turn_on
   - data:
       temperature: 25
-    entity_id: climate.ac_pasillo
+    entity_id: climate.aire_pasillo
     service: climate.set_temperature
   - data:
       disable_notification: false
@@ -574,3 +574,21 @@
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
+- id: '1594586422804'
+  alias: Aire Pasillo ON
+  description: ''
+  trigger:
+  - at: '23:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: climate.aire_pasillo
+    service: climate.turn_on
+  - data: {}
+    entity_id: climate.aire_estudio
+    service: climate.turn_on
+  - data:
+      temperature: 25
+    entity_id: climate.aire_estudio
+    service: climate.set_temperature

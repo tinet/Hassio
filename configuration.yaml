@@ -99,41 +99,25 @@ smartir:
     
 climate:
   - platform: smartir
-    name: AC estudio
+    name: Aire estudio
     device_code: 1065
     controller_data: cmnd/mando_estudio/irsend
     temperature_sensor: sensor.temperatura_estudio
     humidity_sensor: sensor.humedad_estudio
-    power_sensor: binary_sensor.ac_estudio_power
 
   - platform: smartir
-    name: AC pasillo
+    name: Aire pasillo
     device_code: 1065
     controller_data: cmnd/mando_pasillo/irsend
     temperature_sensor: sensor.temperatura_pasillo
     humidity_sensor: sensor.humedad_pasillo
-    power_sensor: binary_sensor.ac_pasillo_power
 
   - platform: smartir
-    name: AC salón
-    device_code: 1065
-    controller_data: cmnd/mando_salon/irsend
+    name: Aire salón
+    device_code: 1261
+    controller_data: cmnd/mando_salon/irhvac
     temperature_sensor: sensor.temperatura_salon
     humidity_sensor: sensor.humedad_salon
-    power_sensor: binary_sensor.ac_salon_power
-
-binary_sensor:
-  - platform: template
-    sensors:
-      ac_estudio_power:
-        value_template: >-
-          {[ states('sensor.aire_estudio_power') | float > 8 }}
-      ac_pasillo_power:
-        value_template: >-
-          {[ states('sensor.aire_pasillo_power') | float > 8 }}
-      ac_salon_power:
-        value_template: >-
-          {[ states('sensor.aire_salon_power') | float > 8 }}
 
 
 
@@ -148,15 +132,15 @@ switch:
 
 #--------------------------------------------------------  AIRES  --------------------------------------------------------------
 # Estudio
-  - platform: mqtt
-    name: aire_estudio
-    state_topic: aire_estudio/relay/0
-    command_topic: aire_estudio/relay/0/set
-    payload_on: 1
-    payload_off: 0
-    availability_topic: aire_estudio/status
-    payload_available: 1
-    payload_not_available: 0
+#  - platform: mqtt
+#    name: aire_estudio
+#    state_topic: aire_estudio/relay/0
+#    command_topic: aire_estudio/relay/0/set
+#    payload_on: 1
+#    payload_off: 0
+#    availability_topic: aire_estudio/status
+#    payload_available: 1
+#    payload_not_available: 0
 
 # Tasmota IR
 #  - platform: mqtt
