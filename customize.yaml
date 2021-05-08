@@ -93,6 +93,28 @@ sensor.temperatura_parking:
 sensor.humedad_parking:
   friendly_name: Parking
 sensor.temperatura_jardin:
-  friendly_name: Jardín
+  friendly_name: Exterior
 sensor.humedad_jardin:
-  friendly_name: Jardín
+  friendly_name: Exterior
+sensor.aire_estudio_humidity:
+  friendly_name: Estudio
+sensor.aire_estudio_temperature:
+  friendly_name: Estudio
+sensor.aire_salon_temperature:
+  friendly_name: Salón
+sensor.aire_salon_humidity:
+  friendly_name: Salón
+sensor.aire_pasillo_humidity:
+  friendly_name: Pasillo
+sensor.aire_pasillo_temperature:
+  friendly_name: Pasillo
+sensor.aire_estudio_power_2:
+  friendly_name: AC estudio
+sensor.invernadero_temperature:
+  friendly_name: Invernadero
+sensor.temperaturas_jardin_temperature_2:
+  friendly_name: Invernadero
+sensor.temperaturas_jardin_temperature:
+  friendly_name: Exterior
+sensor.temperaturas_jardin_temperature_3:
+  friendly_name: Substrato

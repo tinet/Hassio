@@ -1,43 +1,42 @@
 luces_planta_2:
   name: Luces planta 2
   entities:
-    - light.luz_escalera_estudio
-    - light.luz_estudio
+    - switch.luz_escalera_estudio
+    - switch.luz_estudio
 
 luces_planta_1:
   name: Luces planta 1
   entities:
-    - light.luz_pasillo_1
-    - light.luz_pasillo_2
-    - light.luz_marta
-    - light.luz_bano
-    - light.luz_ducha
-    - light.luz_albert
-    - light.luz_mireia
+    - switch.luz_pasillo_escalera
+    - switch.luz_pasillo
+    - switch.luz_bano
+    - switch.luz_ducha
+    - switch.luz_albert
+    - switch.luz_mireia
 
 luces_planta_baja:
   name: Luces planta baja
   entities:
-    - light.luz_entrada
-    - light.luz_despacho
-    - light.luz_aseo
+    - switch.luz_entrada
+    - switch.luz_despacho
+    - switch.luz_aseo
     - light.luz_comedor
     - light.luz_sofa
-    - light.luz_cocina
-    - light.luz_caldera
+    - switch.luz_cocina
+    - switch.luz_caldera
 
 luces_parking:
   name: Luces parking
   entities:
-    - light.luz_parking
-    - light.luz_escalera_parking
+    - switch.luz_parking
+    - switch.luz_escalera_parking
 
 luces_exteriores:
   name: Luces exteriores
   entities:
-    - light.luz_exterior
-    - light.luz_jardin
-    - light.luz_terraza
+    - switch.luz_exterior
+    - switch.luz_jardin
+    - switch.luz_terraza
 
 aires:
   name: Aires
@@ -45,3 +44,12 @@ aires:
     - climate.ac_estudio
     - climate.ac_pasillo
     - climate.ac_salon
+
+electrodomesticos:
+  name: Electrodomésticos
+  entities:
+    - sensor.microondas_power
+    - sensor.lavadora_power
+    - sensor.secadora_power
+    - sensor.lavavajillas_power
+    - sensor.nevera_power
