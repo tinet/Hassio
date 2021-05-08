@@ -688,8 +688,8 @@
       disable_notification: false
       disable_web_page_preview: true
       message: Balance neto horario {{ states("sensor.balance_neto_horario") }} kWh{{
-        '\n' }}{{ '\n' }} From grid {{ states("sensor.from_grid_hour") }} kWh consumidos
-        {{ '\n' }} To grid {{ states("sensor.to_grid_hour")}} kWh vertidos
+        '\n' }}{{ '\n' }}    {{ states("sensor.from_grid_hour") }} kWh consumidos
+        {{ '\n' }}    {{ states("sensor.to_grid_hour")}} kWh vertidos
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
