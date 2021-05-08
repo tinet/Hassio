@@ -9,11 +9,6 @@ http:
   ip_ban_enabled: True
   login_attempts_threshold: 3
 
-
-# Purgar la base de datos
-recorder:
-  purge_keep_days: 15
-
 # Text to speech
 tts:
   - platform: google_translate
@@ -36,7 +31,13 @@ scene: !include scenes.yaml
 #--------------------------------------------------------------------------------------------------------------------------------
 
 logger:
-  default: warning
+  default: critical
+  
+# database to memory not disk
+recorder:
+  purge_keep_days: 5
+  db_url: 'sqlite:///:memory:'  # Set database to use memory, not SD card
+
 #  logs:  
 #    custom_components.fronius_basic: debug
 #    custom_components.fronius_inverter: debug
@@ -102,22 +103,22 @@ climate:
     name: Aire estudio
     device_code: 1065
     controller_data: cmnd/mando_estudio/irsend
-    temperature_sensor: sensor.temperatura_estudio
-    humidity_sensor: sensor.humedad_estudio
+    temperature_sensor: sensor.aire_estudio_temperature
+    humidity_sensor: sensor.aire_estudio_humidity
 
   - platform: smartir
     name: Aire pasillo
-    device_code: 1065
-    controller_data: cmnd/mando_pasillo/irsend
-    temperature_sensor: sensor.temperatura_pasillo
-    humidity_sensor: sensor.humedad_pasillo
+    device_code: 1261
+    controller_data: cmnd/mando_pasillo/irhvac
+    temperature_sensor: sensor.aire_pasillo_temperature
+    humidity_sensor: sensor.aire_pasillo_humidity
 
   - platform: smartir
     name: Aire salón
     device_code: 1261
     controller_data: cmnd/mando_salon/irhvac
-    temperature_sensor: sensor.temperatura_salon
-    humidity_sensor: sensor.humedad_salon
+    temperature_sensor: sensor.aire_salon_temperature
+    humidity_sensor: sensor.aire_salon_humidity
 
 
 
@@ -130,53 +131,7 @@ climate:
 
 switch:
 
-#--------------------------------------------------------  AIRES  --------------------------------------------------------------
-# Estudio
-#  - platform: mqtt
-#    name: aire_estudio
-#    state_topic: aire_estudio/relay/0
-#    command_topic: aire_estudio/relay/0/set
-#    payload_on: 1
-#    payload_off: 0
-#    availability_topic: aire_estudio/status
-#    payload_available: 1
-#    payload_not_available: 0
-
-# Tasmota IR
-#  - platform: mqtt
-#    name: Bomba calor salón
-#    command_topic: cmnd/mando_estudio/irsend
-#    payload_on: '{"Protocol":"LG","Bits":28,"Data":"0x8804509","DataLSB":"0x1001A290","Repeat":0}'
-#    payload_off: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
-#    retain: false
-
-#  - platform: mqtt
-#    name: Aire salón
-#    command_topic: cmnd/mando_estudio/irsend
-#    payload_on: '{"Protocol":"LG","Bits":28,"Data":"0x8800358","DataLSB":"0x1001C01A","Repeat":0}'
-#    payload_off: '{"Protocol":"LG","Bits":28,"Data":"0x88C0051","DataLSB":"0x1031008A","Repeat":0}'
-#    retain: false
-
 # Blitzwolfs
-  - platform: mqtt
-    name: Lavadora
-    state_topic: lavadora/relay/0
-    command_topic: lavadora/relay/0/set
-    payload_on: 1
-    payload_off: 0
-    availability_topic: lavadora/status
-    payload_available: 1
-    payload_not_available: 0
-
-  - platform: mqtt
-    name: Secadora
-    state_topic: secadora/relay/0
-    command_topic: secadora/relay/0/set
-    payload_on: 1
-    payload_off: 0
-    availability_topic: secadora/status
-    payload_available: 1
-    payload_not_available: 0
 
   - platform: mqtt
     name: Iqas
@@ -189,34 +144,23 @@ switch:
     payload_not_available: 0
 
   - platform: mqtt
-    name: Lavavajillas
-    state_topic: lavavajillas/relay/0
-    command_topic: lavavajillas/relay/0/set
+    name: pastor
+    state_topic: pastor/relay/0
+    command_topic: pastor/relay/0/set
     payload_on: 1
     payload_off: 0
-    availability_topic: lavavajillas/status
+    availability_topic: pastor/status
+    payload_available: 1
+
+  - platform: mqtt
+    name: tv_kitchen
+    state_topic: tv_kitchen/relay/0
+    command_topic: tv_kitchen/relay/0/set
+    payload_on: 1
+    payload_off: 0
+    availability_topic: tv_kitchen/status
     payload_available: 1
     payload_not_available: 0
-
-# Extractor aseo (shelly 2.5)
-  - platform: mqtt
-    name: Extractor aseo
-    command_topic: shellies/luz_aseo/relay/1/command
-    state_topic: shellies/luz_aseo/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Extractor baño (shelly 2.5)
-  - platform: mqtt
-    name: Extractor baño
-    command_topic: shellies/luz_bano/relay/1/command
-    state_topic: shellies/luz_bano/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
 
 # Sonoff TH16
   - platform: mqtt
@@ -228,8 +172,6 @@ switch:
     availability_topic: sonoff-th16/status
     payload_available: 1
     payload_not_available: 0
-
-
 
 
 #--------------------------------------------------------------------------------------------------------------------------------
@@ -263,7 +205,68 @@ sensor:
 #    monitored_conditions:
 #      - dc_current
 #      - dc_voltage
-    
+
+
+#------------------------------------------------------  PV  -----------------------------------------------------------
+  - platform: template
+    sensors: 
+      pv_power:
+        unit_of_measurement: W
+        value_template: >-
+          {% if (states('sensor.pv_power_2') | float) > 0 %}
+            {{ (states('sensor.pv_power_2') | float) | round(0) }}
+          {% else %}
+            {{ 0 }}
+          {% endif %}
+        friendly_name: 'Producción solar'
+
+      pv_energy_today:
+        unit_of_measurement: kWh
+        value_template: "{{ ((states('sensor.fronius_energy_today') | float) + (states('sensor.ap_qs1_energy_today') | float) ) | round(1) }}"
+        friendly_name: 'Energía producida'
+
+      pv_energy_auto_today:
+        unit_of_measurement: kWh
+        value_template: "{{ ((states('sensor.pv_energy_today') | float) - (states('sensor.grid_energy_returned_today') | float) ) | round(1) }}"
+        friendly_name: 'Energía autoconsumida'
+
+      pv_house_load:
+        unit_of_measurement: W
+        value_template: "{{ ( (states('sensor.grid_power') | float) + (states('sensor.pv_power') | float) ) | round(0) }}"
+
+      pv_self_consumption:
+        unit_of_measurement: '%'
+        value_template: >-
+          {% if (states('sensor.pv_power') | float) <= 0 %}
+            {{ 0 }}
+          {% elif (states('sensor.pv_house_load') | float) > (states('sensor.pv_power') | float) %}
+            {{ 100 }}
+          {% else %}
+            {{ (( (states('sensor.pv_house_load') | float) / (states('sensor.pv_power') | float) ) * 100) | round(0) }}
+          {% endif %}
+
+      pv_self_sufficient:
+        unit_of_measurement: '%'
+        value_template: >-
+          {% if (states('sensor.pv_power') | float) <= 0 %}
+            {{ 0 }}
+          {% elif (states('sensor.grid_power') | float) <= 0 %}
+            {{ 100 }}
+          {% else %}
+            {{ (( (states('sensor.pv_power') | float) / (states('sensor.pv_house_load') | float) ) * 100) | round(0) }}
+          {% endif %}
+
+      pv_grid_consumption:
+        unit_of_measurement: W
+        value_template: "{{ states('sensor.grid_power') | round(0) }}"
+
+      fronius_power_round:
+        unit_of_measurement: W
+        value_template: "{{ states('sensor.fronius_power') | round(0) }}"
+
+      ap_qs1_power_round:
+        unit_of_measurement: W
+        value_template: "{{ states('sensor.ap_qs1_power') | round(0) }}"
 
 #---------------------------------------------------------  WIBEEE  ---------------------------------------------------------------
 #  - platform: wibeee
@@ -293,42 +296,7 @@ sensor:
 #    unit_of_measurement: kWh
 
 
-# Shelly h&T
-#  - platform: mqtt
-#    name: Temperatura estudio
-#    state_topic: shellies/shelly_ht/sensor/temperature
-#    unit_of_measurement: °C
-#  - platform: mqtt
-#    name: Humedad estudio
-#    state_topic: shellies/shelly_ht/sensor/humidity
-#    unit_of_measurement: '%'
-#  - platform: mqtt
-#    name: Bateria HT
-#    state_topic: shellies/shelly_ht/sensor/battery
-#    unit_of_measurement: '%'
-
-
 #------------------------------------------------------  BLITZWOLF  ------------------------------------------------------------
-
-# Blitzwolf lavadora (210)
-  - platform: mqtt
-    name: lavadora_power
-    state_topic: lavadora/power
-    unit_of_measurement: W
-  - platform: mqtt
-    name: lavadora_energy
-    state_topic: lavadora/energy
-    unit_of_measurement: kWh
-    
-# Blitzwolf secadora (211)
-  - platform: mqtt
-    name: secadora_power
-    state_topic: secadora/power
-    unit_of_measurement: W
-  - platform: mqtt
-    name: secadora_energy
-    state_topic: secadora/energy
-    unit_of_measurement: kWh
 
 # Blitzwolf IQAS (212)
   - platform: mqtt
@@ -340,85 +308,58 @@ sensor:
     state_topic: iqas/energy
     unit_of_measurement: kWh
 
-# Blitzwolf lavavajillas (213)
+# Blitzwolf Pastor (211)
   - platform: mqtt
-    name: lavavajillas_power
-    state_topic: lavavajillas/power
+    name: pastor_power
+    state_topic: pastor/power
     unit_of_measurement: W
+ 
+# Blitzwolf TV kitchen (213)
   - platform: mqtt
-    name: lavavajillas_energy
-    state_topic: lavavajillas/energy
-    unit_of_measurement: kWh
+    name: tv_kitchen_power
+    state_topic: tv_kitchen/power
+    unit_of_measurement: W
 
-        
-#------------------------------------------------------  TEMPLATE AIRES  ----------------------------------------------------------
+#------------------------------------------------------  TEMPLATE ELECTRODOMESTICOS  ----------------------------------------------------------
   - platform: template
     sensors: 
       electrodomesticos_potencia:
         unit_of_measurement: W
-        value_template: "{{ ((states('sensor.lavadora_power') | int) + (states('sensor.secadora_power') | int) + (states('sensor.lavavajillas_power') | int)) | round(0) }}"
+        value_template: "{{ ((states('sensor.horno_power') | int) + (states('sensor.induccion_power') | int) + (states('sensor.microondas_power') | int) + (states('sensor.lavadora_power') | int) + (states('sensor.secadora_power') | int) + (states('sensor.lavavajillas_power') | int) + (states('sensor.nevera_power') | int)) | round(0) }}"
         friendly_name: 'Electrodomésticos'
 
       electrodomesticos_energy_today:
         unit_of_measurement: kWh
-        value_template: "{{ ((states('sensor.lavadora_energy_today') | float) + (states('sensor.secadora_energy_today') | float) + (states('sensor.lavavajillas_energy_today') | float) ) | round(1) }}"
+        value_template: "{{ ((states('sensor.horno_energy_today') | float) + (states('sensor.induccion_energy_today') | float) + (states('sensor.microondas_energy_today') | float) + (states('sensor.lavadora_energy_today') | float) + (states('sensor.secadora_energy_today') | float) + (states('sensor.lavavajillas_energy_today') | float) + (states('sensor.nevera_energy_today') | float) ) | round(1) }}"
         friendly_name: 'Electrodomésticos hoy'
 
 
-#--------------------------------------------------------  AIRES  --------------------------------------------------------------
-
-# Aire salon (shelly 1PM - ESPurna)
-  - platform: mqtt
-    name: aire_salon_power
-    state_topic: aire_salon/power
-    unit_of_measurement: W
-    value_template: "{{ value | round(0) }}"
-
-  - platform: mqtt
-    name: aire_salon_energy
-    state_topic: aire_salon/energy
-    unit_of_measurement: kWh
-    value_template: "{{ value | round(2) }}"
-
-# Aire pasillo (shelly 1PM - ESPurna)
-  - platform: mqtt
-    name: aire_pasillo_power
-    state_topic: aire_pasillo/power
-    unit_of_measurement: W
-    value_template: "{{ value | round(0) }}"
-
-  - platform: mqtt
-    name: aire_pasillo_energy
-    state_topic: aire_pasillo/energy
-    unit_of_measurement: kWh
-    value_template: "{{ value | round(2) }}"
-
-# Aire estudio (shelly 1PM - ESPurna)
-  - platform: mqtt
-    name: aire_estudio_power
-    state_topic: aire_estudio/power
-    unit_of_measurement: W
-    value_template: "{{ value | round(0) }}"
-
-  - platform: mqtt
-    name: aire_estudio_energy
-    state_topic: aire_estudio/energy
-    unit_of_measurement: kWh
-    value_template: "{{ value | round(2) }}"
-
-        
 #------------------------------------------------------  TEMPLATE AIRES  ----------------------------------------------------------
   - platform: template
     sensors: 
       aires_potencia:
         unit_of_measurement: W
-        value_template: "{{ ((states('sensor.aire_estudio_power') | int) + (states('sensor.aire_pasillo_power') | int) + (states('sensor.aire_salon_power') | int)) | round(0) }}"
+        value_template: "{{ ((states('sensor.aire_estudio_power') | float) + (states('sensor.aire_pasillo_power') | float) + (states('sensor.aire_salon_power') | float)) | round(0) }}"
         friendly_name: 'Aires'
 
       aires_energy_today:
         unit_of_measurement: kWh
         value_template: "{{ ((states('sensor.aire_estudio_energy_today') | float) + (states('sensor.aire_pasillo_energy_today') | float) + (states('sensor.aire_salon_energy_today') | float) ) | round(1) }}"
         friendly_name: 'Aires hoy'
+
+        
+#------------------------------------------------------  TEMPLATE INFORMATICA  ----------------------------------------------------------
+  - platform: template
+    sensors: 
+      informatica_potencia:
+        unit_of_measurement: W
+        value_template: "{{ ((states('sensor.pc_despacho_power') | int) + (states('sensor.pc_albert_power') | int) + (states('sensor.pc_agusti_power') | int)) | round(0) }}"
+        friendly_name: 'Informática'
+
+      informatica_energy:
+        unit_of_measurement: kWh
+        value_template: "{{ ((states('sensor.pc_despacho_energy') | int) + (states('sensor.pc_albert_energy') | int) + (states('sensor.pc_agusti_energy') | int)) | round(0) }}"
+        friendly_name: 'Informática energía'
 
 
 #-------------------------------------------------------  SONOFF --------------------------------------------------------------
@@ -434,48 +375,64 @@ sensor:
     unit_of_measurement: '%'
 
 
-#-------------------------------------------------------  DHT-22 --------------------------------------------------------------
-#  *** Changed to ESPHome ***
-
-#  - platform: mqtt
-#    name: Temperatura estudio
-#    state_topic: dht22_estudio/temperature
-#    unit_of_measurement: °C
- 
-#  - platform: mqtt
-#    name: Humedad estudio
-#    state_topic: dht22_estudio/humidity
-#    unit_of_measurement: '%'
-
-#  - platform: mqtt
-#    name: Temperatura pasillo
-#    state_topic: dht22_pasillo/temperature
-#    unit_of_measurement: °C
- 
-#  - platform: mqtt
-#    name: Humedad pasillo
-#    state_topic: dht22_pasillo/humidity
-#    unit_of_measurement: '%'
-
-  - platform: mqtt
-    name: Temperatura salón
-    state_topic: dht22_salon/temperature
-    unit_of_measurement: °C
- 
-  - platform: mqtt
-    name: Humedad salón
-    state_topic: dht22_salon/humidity
-    unit_of_measurement: '%'
-
-
 #----------------------------------------------------  ENERGIA POR DIAS  ----------------------------------------------------------
 
 # Calculo de la energia de hoy, ayer y anteayer
   - platform: mqtt
-    state_topic: ha/secadora_energy_midnight
-    name: 'secadora_energy_midnight'
+    state_topic: ha/fronius_energy_midnight
+    name: 'fronius_energy_midnight'
     unit_of_measurement: kWh
-    value_template: '{{ value_json.secadora_energy_midnight }}'
+    value_template: '{{ value_json.fronius_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/ap_qs1_energy_midnight
+    name: 'ap_qs1_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.ap_qs1_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/grid_energy_midnight
+    name: 'grid_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.grid_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/grid_energy_returned_midnight
+    name: 'grid_energy_returned_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.grid_energy_returned_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/grid_energy_hour
+    name: 'grid_energy_hour'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.grid_energy_hour }}'
+
+  - platform: mqtt
+    state_topic: ha/grid_energy_returned_hour
+    name: 'grid_energy_returned_hour'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.grid_energy_returned_hour }}'
+
+
+
+  - platform: mqtt
+    state_topic: ha/induccion_energy_midnight
+    name: 'induccion_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.induccion_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/horno_energy_midnight
+    name: 'horno_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.horno_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/microondas_energy_midnight
+    name: 'microondas_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.microondas_energy_midnight }}'
 
   - platform: mqtt
     state_topic: ha/lavadora_energy_midnight
@@ -484,10 +441,24 @@ sensor:
     value_template: '{{ value_json.lavadora_energy_midnight }}'
 
   - platform: mqtt
+    state_topic: ha/secadora_energy_midnight
+    name: 'secadora_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.secadora_energy_midnight }}'
+
+  - platform: mqtt
     state_topic: ha/lavavajillas_energy_midnight
     name: 'lavavajillas_energy_midnight'
     unit_of_measurement: kWh
     value_template: '{{ value_json.lavavajillas_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/nevera_energy_midnight
+    name: 'nevera_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.nevera_energy_midnight }}'
+
+
 
   - platform: mqtt
     state_topic: ha/iqas_energy_midnight
@@ -525,6 +496,101 @@ sensor:
     unit_of_measurement: kWh
     value_template: '{{ value_json.aire_estudio_energy_midnight }}'
 
+  - platform: mqtt
+    state_topic: ha/informatica_energy_midnight
+    name: 'informatica_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.informatica_energy_midnight }}'
+
+
+
+  - platform: template
+    sensors:
+      from_grid_hour:
+        value_template: >-
+          {% if (states('sensor.grid_energy_hour') | float) > (states('sensor.grid_energy') | float) %}
+            {{ ((states('sensor.grid_energy') | float)) }}
+          {% else %}
+            {{ ((states('sensor.grid_energy') | float) - (states('sensor.grid_energy_hour') | float)) }}
+          {% endif %}
+        friendly_name: 'From grid'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      to_grid_hour:
+        value_template: >-
+          {% if (states('sensor.grid_energy_returned_hour') | float) > (states('sensor.grid_energy_returned') | float) %}
+            {{ ((states('sensor.grid_energy_returned') | float)) }}
+          {% else %}
+            {{ ((states('sensor.grid_energy_returned') | float) - (states('sensor.grid_energy_returned_hour') | float)) }}
+          {% endif %}
+        friendly_name: 'To grid'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      balance_neto_horario:
+        value_template: >-
+          {% if (states('sensor.grid_energy_returned_hour') | float) > (states('sensor.grid_energy_returned') | float) %}
+            {{ ((states('sensor.to_grid_hour') | float) - (states('sensor.from_grid_hour') | float)) | round(1) }}
+          {% else %}
+            {{ ((states('sensor.to_grid_hour') | float) - (states('sensor.from_grid_hour') | float)) | round(1) }}
+          {% endif %}
+        friendly_name: 'Balance neto horario'
+        unit_of_measurement: kWh
+
+
+  - platform: template
+    sensors:
+      fronius_energy_today:
+        value_template: >-
+          {% if (states('sensor.fronius_energy_midnight') | float) > (states('sensor.fronius_energy') | float) %}
+            {{ ((states('sensor.fronius_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.fronius_energy') | float) - (states('sensor.fronius_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Fronius hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      ap_qs1_energy_today:
+        value_template: >-
+          {% if (states('sensor.ap_qs1_energy_midnight') | float) > (states('sensor.ap_qs1_energy') | float) %}
+            {{ ((states('sensor.ap_qs1_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.ap_qs1_energy') | float) - (states('sensor.ap_qs1_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'APsystems hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      grid_energy_today:
+        value_template: >-
+          {% if (states('sensor.grid_energy_midnight') | float) > (states('sensor.grid_energy') | float) %}
+            {{ ((states('sensor.grid_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.grid_energy') | float) - (states('sensor.grid_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Energía red'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      grid_energy_returned_today:
+        value_template: >-
+          {% if (states('sensor.grid_energy_returned_midnight') | float) > (states('sensor.grid_energy_returned') | float) %}
+            {{ ((states('sensor.grid_energy_returned') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.grid_energy_returned') | float) - (states('sensor.grid_energy_returned_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Energía inyectada'
+        unit_of_measurement: kWh
+
+
+
   - platform: template
     sensors:
       iqas_energy_today:
@@ -537,6 +603,44 @@ sensor:
         friendly_name: 'Energía hoy'
         unit_of_measurement: kWh
 
+
+
+  - platform: template
+    sensors:
+      induccion_energy_today:
+        value_template: >-
+          {% if (states('sensor.induccion_energy_midnight') | float) > (states('sensor.induccion_energy') | float) %}
+            {{ ((states('sensor.induccion_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.induccion_energy') | float) - (states('sensor.induccion_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Inducción hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      horno_energy_today:
+        value_template: >-
+          {% if (states('sensor.horno_energy_midnight') | float) > (states('sensor.horno_energy') | float) %}
+            {{ ((states('sensor.horno_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.horno_energy') | float) - (states('sensor.horno_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Horno + microondas hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      microondas_energy_today:
+        value_template: >-
+          {% if (states('sensor.microondas_energy_midnight') | float) > (states('sensor.microondas_energy') | float) %}
+            {{ ((states('sensor.microondas_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.microondas_energy') | float) - (states('sensor.microondas_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Thermomix + Nespresso hoy'
+        unit_of_measurement: kWh
+        
   - platform: template
     sensors:
       lavadora_energy_today:
@@ -575,6 +679,21 @@ sensor:
 
   - platform: template
     sensors:
+      nevera_energy_today:
+        value_template: >-
+          {% if (states('sensor.nevera_energy_midnight') | float) > (states('sensor.nevera_energy') | float) %}
+            {{ ((states('sensor.nevera_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.nevera_energy') | float) - (states('sensor.nevera_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Nevera hoy'
+        unit_of_measurement: kWh
+
+
+
+
+  - platform: template
+    sensors:
       aire_salon_energy_today:
         value_template: >-
           {% if (states('sensor.aire_salon_energy_midnight') | float) > (states('sensor.aire_salon_energy') | float) %}
@@ -608,6 +727,18 @@ sensor:
           {% endif %}
         friendly_name: 'AC estudio hoy'
         unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      informatica_energy_today:
+        value_template: >-
+          {% if (states('sensor.informatica_energy_midnight') | float) > (states('sensor.informatica_energy') | float) %}
+            {{ ((states('sensor.informatica_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.informatica_energy') | float) - (states('sensor.informatica_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Informática hoy'
+        unit_of_measurement: kWh        
         
         
 #----------------------------------------------------  TEMPLATE EXCEDENTES  -------------------------------------------------------
@@ -629,232 +760,6 @@ sensor:
 #--------------------------------------------------------------------------------------------------------------------------------
 
 light:
-
-# Luz sofa (shelly dimmer)
-  - platform: mqtt
-    schema: template
-    name: Luz sofá
-    command_topic: shellies/luz_sofa/light/0/set
-    state_topic: shellies/luz_sofa/light/0/status
-    command_on_template: >
-      {"turn": "on" 
-      {% if brightness is defined %}
-      , "brightness": {{ (brightness | float * 0.3922) | round(0) }}
-      {% endif %}
-      }
-    command_off_template: '{"turn": "off"}'
-    state_template: '{% if value_json.ison %} on {% else %} off {% endif %}'
-    brightness_template: '{{ (value_json.brightness | float * 2.55) | round(0) }}'
-    qos: 1
-    retain: true
-
-# Luz comedor  (shelly dimmer)
-  - platform: mqtt
-    schema: template
-    name: Luz comedor
-    command_topic: shellies/luz_comedor/light/0/set
-    state_topic: shellies/luz_comedor/light/0/status
-    command_on_template: >
-      {"turn": "on" 
-      {% if brightness is defined %}
-      , "brightness": {{ (brightness | float * 0.3922) | round(0) }}
-      {% endif %}
-      }
-    command_off_template: '{"turn": "off"}'
-    state_template: '{% if value_json.ison %} on {% else %} off {% endif %}'
-    brightness_template: '{{ (value_json.brightness | float * 2.55) | round(0) }}'
-    qos: 1
-    retain: true
-    
-# Luz cocina  (shelly 1)
-  - platform: mqtt
-    name: Luz cocina
-    command_topic: shellies/luz_cocina/relay/0/command
-    state_topic: shellies/luz_cocina/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz aseo  (shelly 2.5)
-  - platform: mqtt
-    name: Luz aseo
-    command_topic: shellies/luz_aseo/relay/0/command
-    state_topic: shellies/luz_aseo/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz baño  (shelly 2.5)
-  - platform: mqtt
-    name: Luz baño
-    command_topic: shellies/luz_bano/relay/0/command
-    state_topic: shellies/luz_bano/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz Marta  (shelly 1)
-  - platform: mqtt
-    name: Luz Marta
-    command_topic: shellies/luz_marta/relay/0/command
-    state_topic: shellies/luz_marta/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz caldera  (shelly 1)
-  - platform: mqtt
-    name: Luz caldera
-    command_topic: shellies/luz_caldera/relay/0/command
-    state_topic: shellies/luz_caldera/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz despacho  (shelly 1)
-  - platform: mqtt
-    name: Luz despacho
-    command_topic: shellies/luz_despacho/relay/0/command
-    state_topic: shellies/luz_despacho/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz entrada  (shelly 2.5)
-  - platform: mqtt
-    name: Luz entrada
-    command_topic: shellies/luz_entrada/relay/0/command
-    state_topic: shellies/luz_entrada/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz exterior  (shelly 2.5)
-  - platform: mqtt
-    name: Luz exterior
-    command_topic: shellies/luz_entrada/relay/1/command
-    state_topic: shellies/luz_entrada/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz parking  (shelly 1)
-  - platform: mqtt
-    name: Luz parking
-    command_topic: shellies/luz_parking/relay/0/command
-    state_topic: shellies/luz_parking/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz escalera parking  (shelly 1)
-  - platform: mqtt
-    name: Luz escalera parking
-    command_topic: shellies/luz_escalera_parking/relay/0/command
-    state_topic: shellies/luz_escalera_parking/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz Albert  (shelly 2.5)
-  - platform: mqtt
-    name: Luz Albert
-    command_topic: shellies/luz_albert/relay/0/command
-    state_topic: shellies/luz_albert/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz Mireia  (shelly 2.5)
-  - platform: mqtt
-    name: Luz Mireia
-    command_topic: shellies/luz_albert/relay/1/command
-    state_topic: shellies/luz_albert/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz ducha  (shelly 2.5)
-  - platform: mqtt
-    name: Luz ducha
-    command_topic: shellies/luz_ducha/relay/0/command
-    state_topic: shellies/luz_ducha/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz pasillo 2  (shelly 2.5)
-  - platform: mqtt
-    name: Luz pasillo 2
-    command_topic: shellies/luz_ducha/relay/1/command
-    state_topic: shellies/luz_ducha/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz jardin  (shelly 1)
-  - platform: mqtt
-    name: Luz jardín
-    command_topic: shellies/luz_jardin/relay/0/command
-    state_topic: shellies/luz_jardin/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz escalera estudio  (shelly 1)
-  - platform: mqtt
-    name: Luz escalera estudio
-    command_topic: shellies/luz_escalera_estudio/relay/0/command
-    state_topic: shellies/luz_escalera_estudio/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-    
-# Luz pasillo 1  (shelly 1)
-  - platform: mqtt
-    name: Luz pasillo 1
-    command_topic: shellies/luz_pasillo/relay/0/command
-    state_topic: shellies/luz_pasillo/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz estudio  (shelly 2.5)
-  - platform: mqtt
-    name: Luz estudio
-    command_topic: shellies/luz_estudio/relay/0/command
-    state_topic: shellies/luz_estudio/relay/0
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
-
-# Luz terraza  (shelly 2.5)
-  - platform: mqtt
-    name: Luz terraza
-    command_topic: shellies/luz_estudio/relay/1/command
-    state_topic: shellies/luz_estudio/relay/1
-    payload_on: 'on'
-    payload_off: 'off'
-    qos: 1
-    retain: true
 
 
 
