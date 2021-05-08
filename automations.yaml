@@ -139,6 +139,61 @@
       retain: true
       topic: ha/aire_estudio_energy_midnight
     service: mqtt.publish
+  - data:
+      payload_template: '{"microondas_energy_midnight": "{{ states("sensor.microondas_energy")
+        }}"}'
+      retain: true
+      topic: ha/microondas_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"nevera_energy_midnight": "{{ states("sensor.nevera_energy")
+        }}"}'
+      retain: true
+      topic: ha/nevera_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"fronius_energy_midnight": "{{ states("sensor.fronius_energy")
+        }}"}'
+      retain: true
+      topic: ha/fronius_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"ap_qs1_energy_midnight": "{{ states("sensor.ap_qs1_energy")
+        }}"}'
+      retain: true
+      topic: ha/ap_qs1_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"induccion_energy_midnight": "{{ states("sensor.induccion_energy")
+        }}"}'
+      retain: true
+      topic: ha/induccion_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"horno_energy_midnight": "{{ states("sensor.horno_energy")
+        }}"}'
+      retain: true
+      topic: ha/horno_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"grid_energy_midnight": "{{ states("sensor.grid_energy")
+        }}"}'
+      retain: true
+      topic: ha/grid_energy_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"grid_energy_returned_midnight": "{{ states("sensor.grid_energy_returned")
+        }}"}'
+      retain: true
+      topic: ha/grid_energy_returned_midnight
+    service: mqtt.publish
+  - data:
+      payload_template: '{"informatica_energy_midnight": "{{ states("sensor.informatica_energy")
+        }}"}'
+      retain: true
+      topic: ha/informatica_energy_midnight
+    service: mqtt.publish
+  mode: single
 - id: '1578818182228'
   alias: Notification P>1000W
   description: Envia un mensaje cuando la potencia de generación es mayor de 1000W
@@ -168,10 +223,13 @@
   - data:
       disable_notification: false
       disable_web_page_preview: true
-      message: '{{ states("sensor.fronius_energy_today") }}kWh producidos hoy'
+      message: '{{ states("sensor.pv_energy_today") }} kWh producidos hoy {{ ''\n''
+        }}{{ ''\n'' }}Fronius:       {{ states("sensor.fronius_energy_today") }} kWh
+        {{ ''\n'' }}APsystems: {{states("sensor.ap_qs1_energy_today") }} kWh'
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
+  mode: single
 - id: '1580035035883'
   alias: Let's Encrypt Renewal
   description: ''
@@ -372,10 +430,10 @@
     for: 00:10:00
     platform: numeric_state
   condition:
-  - after: '13:00:00'
-    before: '23:00:00'
+  - after: '12:00:00'
+    before: '22:00:00'
     condition: time
-  - above: '8'
+  - above: '500'
     condition: numeric_state
     entity_id: sensor.aire_pasillo_power
   action:
@@ -424,8 +482,8 @@
   - minutes: /30
     platform: time_pattern
   condition:
-  - after: 07:50
-    before: '11:00'
+  - after: '11: 50'
+    before: '23:00'
     condition: time
   - above: '5'
     condition: numeric_state
@@ -536,9 +594,11 @@
     entity_id: climate.aire_salon
     service: climate.turn_on
   - data:
-      temperature: 24
-    entity_id: climate.aire_salon
+      temperature: 21
+      hvac_mode: heat
     service: climate.set_temperature
+    target:
+      entity_id: climate.aire_salon
   - data:
       disable_notification: false
       disable_web_page_preview: true
@@ -546,6 +606,7 @@
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
+  mode: single
 - id: '1594458633192'
   alias: Aire Pasillo is ON?
   description: ''
@@ -564,9 +625,11 @@
     entity_id: climate.aire_pasillo
     service: climate.turn_on
   - data:
-      temperature: 25
-    entity_id: climate.aire_pasillo
+      temperature: 21
+      hvac_mode: heat
     service: climate.set_temperature
+    target:
+      entity_id: climate.aire_pasillo
   - data:
       disable_notification: false
       disable_web_page_preview: true
@@ -574,21 +637,71 @@
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
+  mode: single
 - id: '1594586422804'
   alias: Aire Pasillo ON
   description: ''
   trigger:
-  - at: '23:00'
+  - at: 06:00
     platform: time
   condition: []
   action:
   - data: {}
     entity_id: climate.aire_pasillo
     service: climate.turn_on
-  - data: {}
-    entity_id: climate.aire_estudio
-    service: climate.turn_on
   - data:
-      temperature: 25
+      temperature: 24
     entity_id: climate.aire_estudio
     service: climate.set_temperature
+- id: '1607010429562'
+  alias: Calefaccion OFF
+  description: ''
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.calefaccion
+    service: switch.turn_off
+- id: '1607117154126'
+  alias: Calefaccion ON
+  description: ''
+  trigger:
+  - at: 09:00
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    entity_id: switch.calefaccion
+    service: switch.turn_on
+- id: '1620460899172'
+  alias: Balance neto horario
+  description: ''
+  trigger:
+  - platform: time_pattern
+    seconds: '0'
+    minutes: '0'
+  condition: []
+  action:
+  - data:
+      disable_notification: false
+      disable_web_page_preview: true
+      message: Balance neto horario {{ states("sensor.balance_neto_horario") }} kWh{{
+        '\n' }}{{ '\n' }} From grid {{ states("sensor.from_grid_hour") }} kWh consumidos
+        {{ '\n' }} To grid {{ states("sensor.to_grid_hour")}} kWh vertidos
+      parse_mode: markdown
+      target: '217984856'
+    service: telegram_bot.send_message
+  - data:
+      payload_template: '{"grid_energy_hour": "{{ states("sensor.grid_energy") }}"}'
+      retain: true
+      topic: ha/grid_energy_hour
+    service: mqtt.publish
+  - data:
+      payload_template: '{"grid_energy_returned_hour": "{{ states("sensor.grid_energy_returned")
+        }}"}'
+      retain: true
+      topic: ha/grid_energy_returned_hour
+    service: mqtt.publish
+  mode: single
