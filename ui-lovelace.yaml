@@ -1,54 +1,277 @@
 title: La Garriga
 views:
-  - badges:
-      - entity: sensor.temperatura_salon
-      - entity: sensor.temperatura_pasillo
-      - entity: sensor.temperatura_estudio
-      - entity: sensor.temperatura_jardin
-      - entity: sensor.humedad_jardin
+  - title: ALL
+    badges:
+      - entity: sensor.temperaturas_jardin_temperature
+      - entity: sensor.temperaturas_jardin_temperature_2
+      - entity: sensor.aire_salon_temperature
+      - entity: sensor.aire_pasillo_temperature
+      - entity: sensor.aire_estudio_temperature
     cards:
+      - type: vertical-stack
+        cards:
+          - type: 'custom:dual-gauge-card'
+            title: Auto
+            cardwidth: 300
+            min: 0
+            max: 100
+            outer:
+              entity: sensor.pv_self_sufficient
+              label: suf
+              unit: '%'
+              colors:
+                - color: var(--label-badge-green)
+                  value: 90
+                - color: var(--label-badge-yellow)
+                  value: 50
+                - color: var(--label-badge-red)
+                  value: 0
+            inner:
+              entity: sensor.pv_self_consumption
+              label: con
+              unit: '%'
+              colors:
+                - color: var(--label-badge-green)
+                  value: 0
+                - color: var(--label-badge-yellow)
+                  value: 80
+                - color: var(--label-badge-red)
+                  value: 90
+          - type: gauge
+            max: 6
+            entity: sensor.balance_neto_horario
+            min: -5
+            severity:
+              green: 0
+              yellow: -1
+              red: -5
+          - type: gauge
+            min: 0
+            max: 7000
+            entity: sensor.pv_power
+            severity:
+              green: 4000
+              yellow: 2000
+              red: 0
       - entities:
-          - entity: sensor.fronius_solar
-          - entity: sensor.fronius_energy_today
-          - entity: sensor.fronius_self_consumption
-          - entity: sensor.fronius_grid_injection
-          - entity: sensor.fronius_house_load
-        title: PV
+          - entity: sensor.pv_house_load
+            icon: 'mdi:gauge'
+            name: Consumo vivienda
+          - entity: sensor.pv_grid_consumption
+            icon: 'mdi:gauge'
+            name: Consumo red
+          - entity: sensor.grid_energy_today
+            icon: 'mdi:transmission-tower'
+            name: Red
+          - entity: sensor.pv_energy_auto_today
+            icon: 'mdi:transmission-tower'
+            name: Autoconsumida
+          - entity: sensor.grid_energy_returned_today
+            icon: 'mdi:transmission-tower'
+            name: Vertida
+          - entity: switch.calefaccion
+            icon: 'mdi:power-plug'
+            name: Calefacción
         type: entities
+        show_header_toggle: false
       - entities:
           - entity: sensor.aires_potencia
+            icon: 'mdi:gauge'
           - entity: sensor.electrodomesticos_potencia
+            icon: 'mdi:gauge'
+          - entity: sensor.informatica_potencia
+            name: Informática
+            icon: 'mdi:gauge'
           - entity: sensor.aires_energy_today
+            icon: 'mdi:transmission-tower'
           - entity: sensor.electrodomesticos_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.informatica_energy_today
+            name: Informática hoy
+            icon: 'mdi:transmission-tower'
         title: Consumos
         type: entities
       - entities:
           - entity: group.luces_exteriores
+            icon: 'mdi:string-lights'
           - entity: group.luces_planta_2
+            icon: 'mdi:string-lights'
           - entity: group.luces_planta_1
+            icon: 'mdi:string-lights'
           - entity: group.luces_planta_baja
+            icon: 'mdi:string-lights'
           - entity: group.luces_parking
+            icon: 'mdi:string-lights'
         title: Luces
         type: entities
-      - entities:
-          - entity: sensor.spain_coronavirus_current
-          - entity: sensor.spain_coronavirus_deaths
-          - entity: sensor.spain_coronavirus_confirmed
-        show_header_toggle: false
-        title: Covid-19
-        type: entities
-      - entity: weather.home
+      - entity: weather.openweathermap
         type: weather-forecast
-    title: ALL
-  - badges:
-      - entity: sensor.temperatura_salon
-      - entity: sensor.humedad_salon
+        name: La Garriga
+  - title: PV
+    path: pv
+    visible:
+      - user: 0b501aacecfb42bba904a2e4e4a68859
+      - user: 6117ab5599b94381b0d5b14cccd42e3c
+    badges: []
     cards:
-      - entity: climate.ac_salon
+      - entities:
+          - entity: sensor.pv_power
+            icon: 'mdi:gauge'
+            name: Total
+          - entity: sensor.fronius_power_round
+            name: Fronius
+            icon: 'mdi:solar-panel-large'
+          - entity: sensor.ap_qs1_power_round
+            name: APsystems
+            icon: 'mdi:solar-panel'
+        title: Producción
+        type: entities
+      - entities:
+          - entity: sensor.pv_energy_today
+            icon: 'mdi:transmission-tower'
+            name: Total
+          - entity: sensor.fronius_energy_today
+            icon: 'mdi:transmission-tower'
+            name: Fronius
+          - entity: sensor.ap_qs1_energy_today
+            name: APsystems
+            icon: 'mdi:transmission-tower'
+        title: Energía Producida
+        type: entities
+      - entities:
+          - entity: sensor.grid_voltage
+            name: Tensión entrada
+          - entity: sensor.fronius_voltage
+            name: Tensión cuadro inversor
+        title: Voltajes
+        type: entities
+  - title: ELE
+    path: ele
+    visible:
+      - user: 0b501aacecfb42bba904a2e4e4a68859
+      - user: 6117ab5599b94381b0d5b14cccd42e3c
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.tv_kitchen_power
+            icon: 'mdi:gauge'
+            name: TV cocina
+          - entity: switch.tv_kitchen
+            name: TV cocina
+            icon: 'mdi:power-plug'
+        title: TV
+      - entities:
+          - entity: sensor.induccion_power
+            icon: 'mdi:gauge'
+            name: Inducción
+          - entity: sensor.horno_power
+            icon: 'mdi:gauge'
+            name: Horno + microondas
+          - entity: sensor.microondas_power
+            icon: 'mdi:gauge'
+            name: Thermomix + nespresso
+          - entity: sensor.lavadora_power
+            icon: 'mdi:gauge'
+          - entity: sensor.secadora_power
+            icon: 'mdi:gauge'
+          - entity: sensor.lavavajillas_power
+            icon: 'mdi:gauge'
+          - entity: sensor.nevera_power
+            name: Nevera
+            icon: 'mdi:gauge'
+        title: Electrodomésticos
+        type: entities
+      - type: entities
+        entities:
+          - entity: sensor.induccion_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.horno_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.microondas_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.lavadora_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.secadora_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.lavavajillas_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.nevera_energy_today
+            icon: 'mdi:transmission-tower'
+        title: Energía
+  - title: IT
+    path: it
+    visible:
+      - user: 0b501aacecfb42bba904a2e4e4a68859
+      - user: 6117ab5599b94381b0d5b14cccd42e3c
+    badges: []
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.pc_agusti_power
+            icon: 'mdi:gauge'
+            name: PC Agustí
+          - entity: sensor.pc_albert_power
+            name: PC Albert
+            icon: 'mdi:gauge'
+          - entity: sensor.pc_despacho_power
+            icon: 'mdi:gauge'
+            name: PC despacho
+          - entity: sensor.informatica_energy_today
+            icon: 'mdi:transmission-tower'
+        title: Informática
+        show_header_toggle: false
+  - title: EXT
+    path: pe
+    visible:
+      - user: 0b501aacecfb42bba904a2e4e4a68859
+      - user: 6117ab5599b94381b0d5b14cccd42e3c
+    badges:
+      - entity: sensor.temperaturas_jardin_temperature
+      - entity: sensor.temperaturas_jardin_temperature_2
+      - entity: sensor.humedad_jardin
+    cards:
+      - type: entities
+        entities:
+          - entity: switch.pastor_2
+            name: Pastor
+            icon: 'mdi:power-plug'
+          - entity: sensor.pastor_power_2
+            icon: 'mdi:gauge'
+            name: Pastor
+      - type: sensor
+        entity: sensor.temperaturas_jardin_temperature
+        graph: line
+        name: Temperatura aire
+        detail: 2
+      - type: sensor
+        entity: sensor.temperaturas_jardin_temperature_2
+        graph: line
+        name: Temperatura invernadero
+        detail: 2
+      - type: sensor
+        entity: sensor.temperaturas_jardin_temperature_3
+        graph: line
+        name: Temperatura substrato
+        detail: 2
+      - type: sensor
+        entity: sensor.invernadero_humidity
+        graph: line
+        name: Humedad invernadero
+        detail: 2
+  - path: pb
+    title: PB
+    badges:
+      - entity: sensor.aire_salon_temperature
+      - entity: sensor.aire_salon_humidity
+    cards:
+      - entity: climate.aire_salon
         type: thermostat
       - entities:
           - entity: sensor.aire_salon_power
+            icon: 'mdi:gauge'
           - entity: sensor.aire_salon_energy_today
+            icon: 'mdi:transmission-tower'
         show_header_toggle: false
         type: entities
       - double_tap_action:
@@ -58,74 +281,86 @@ views:
       - entity: light.luz_sofa
         type: light
       - entities:
-          - entity: light.luz_entrada
-          - entity: light.luz_estudio
-          - entity: light.luz_aseo
+          - entity: switch.luz_entrada
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_despacho
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_aseo
+            icon: 'mdi:lightbulb'
           - entity: switch.extractor_aseo
-          - entity: light.luz_caldera
-          - entity: light.luz_cocina
+            icon: 'mdi:power-plug'
+          - entity: switch.luz_caldera
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_cocina
+            icon: 'mdi:lightbulb'
         title: Luces
         type: entities
-      - entities:
-          - entity: sensor.lavadora_power
-          - entity: sensor.secadora_power
-          - entity: sensor.lavavajillas_power
-          - entity: sensor.lavadora_energy_today
-          - entity: sensor.secadora_energy_today
-          - entity: sensor.lavavajillas_energy_today
-        title: Electrodomésticos
-        type: entities
-    path: pb
-    title: PB
-  - badges:
-      - entity: sensor.temperatura_pasillo
-      - entity: sensor.humedad_pasillo
+  - path: p1
+    title: P1
+    badges:
+      - entity: sensor.aire_pasillo_temperature
+      - entity: sensor.aire_pasillo_humidity
     cards:
-      - entity: climate.ac_pasillo
+      - entity: climate.aire_pasillo
         type: thermostat
       - entities:
           - entity: sensor.aire_pasillo_power
+            icon: 'mdi:gauge'
           - entity: sensor.aire_pasillo_energy_today
+            icon: 'mdi:transmission-tower'
         show_header_toggle: false
         type: entities
       - entities:
-          - entity: light.luz_pasillo_1
-          - entity: light.luz_pasillo_2
-          - entity: light.luz_marta
-          - entity: light.luz_bano
-          - entity: switch.extractor_bano
-          - entity: light.luz_ducha
-          - entity: light.luz_albert
-          - entity: light.luz_mireia
+          - entity: switch.luz_pasillo_escalera
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_pasillo
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_bano
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_ducha
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_albert
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_mireia
+            icon: 'mdi:lightbulb'
         title: Luces
         type: entities
-    path: p1
-    title: P1
-  - badges:
-      - entity: sensor.temperatura_estudio
-      - entity: sensor.humedad_estudio
+  - path: p2
+    title: P2
+    badges:
+      - entity: sensor.aire_estudio_temperature
+      - entity: sensor.aire_estudio_humidity
     cards:
-      - entity: climate.ac_estudio
+      - entity: climate.aire_estudio
         type: thermostat
       - entities:
           - entity: sensor.aire_estudio_power
+            icon: 'mdi:gauge'
           - entity: sensor.aire_estudio_energy_today
-          - entity: switch.aire_estudio
+            icon: 'mdi:transmission-tower'
         show_header_toggle: false
         type: entities
       - entities:
-          - entity: light.luz_escalera_estudio
-          - entity: light.luz_estudio
+          - entity: switch.luz_escalera_estudio
+            icon: 'mdi:lightbulb'
+          - entity: switch.luz_estudio
+            icon: 'mdi:lightbulb'
         title: Luces
         type: entities
       - entities:
-          - entity: switch.iqas
           - entity: sensor.iqas_power
+            name: freeDS
+            icon: 'mdi:gauge'
+          - entity: switch.iqas
+            name: freeDS
+            icon: 'mdi:power-plug'
           - entity: sensor.iqas_energy_today
+            icon: 'mdi:transmission-tower'
           - entity: sensor.iqas_energy_yesterday
+            icon: 'mdi:transmission-tower'
           - entity: sensor.iqas_energy_before_yesterday
-        title: IQAS
+            icon: 'mdi:transmission-tower'
+        title: Radiador
         type: entities
-    path: p2
-    title: P2
+        show_header_toggle: false
 
