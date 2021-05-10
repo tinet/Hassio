@@ -40,11 +40,11 @@ views:
           - type: gauge
             max: 6
             entity: sensor.balance_neto_horario
-            min: -5
             severity:
               green: 0
               yellow: -1
               red: -5
+            min: -6
           - type: gauge
             min: 0
             max: 7000
@@ -162,7 +162,7 @@ views:
             icon: 'mdi:power-plug'
         title: TV
       - entities:
-          - entity: sensor.induccion_power
+          - entity: sensor.induccion_power_adjust
             icon: 'mdi:gauge'
             name: Inducción
           - entity: sensor.horno_power
