@@ -688,20 +688,21 @@
       disable_notification: false
       disable_web_page_preview: true
       message: Balance neto horario {{ states("sensor.balance_neto_horario") }} kWh{{
-        '\n' }}{{ '\n' }}    {{ states("sensor.from_grid_hour") }} kWh consumidos
-        {{ '\n' }}    {{ states("sensor.to_grid_hour")}} kWh vertidos
+        '\n' }}{{ '\n' }}    {{ states("sensor.from_grid_hour") | round(2) }} kWh
+        consumidos {{ '\n' }}    {{ states("sensor.to_grid_hour") | round(2) }} kWh
+        vertidos
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
-  - data:
-      payload_template: '{"grid_energy_hour": "{{ states("sensor.grid_energy") }}"}'
-      retain: true
-      topic: ha/grid_energy_hour
-    service: mqtt.publish
   - data:
       payload_template: '{"grid_energy_returned_hour": "{{ states("sensor.grid_energy_returned")
         }}"}'
       retain: true
       topic: ha/grid_energy_returned_hour
+    service: mqtt.publish
+  - data:
+      payload_template: '{"grid_energy_hour": "{{ states("sensor.grid_energy") }}"}'
+      retain: true
+      topic: ha/grid_energy_hour
     service: mqtt.publish
   mode: single
