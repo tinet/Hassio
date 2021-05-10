@@ -323,9 +323,18 @@ sensor:
 #------------------------------------------------------  TEMPLATE ELECTRODOMESTICOS  ----------------------------------------------------------
   - platform: template
     sensors: 
+      induccion_power_adjust:
+        unit_of_measurement: W
+        value_template: >-
+          {% if (states('sensor.induccion_power') | float) > 0 %}
+            {{ ((states('sensor.induccion_power') | float)) }}
+          {% else %}
+            {{ 0.0 }}
+          {% endif %}
+
       electrodomesticos_potencia:
         unit_of_measurement: W
-        value_template: "{{ ((states('sensor.horno_power') | int) + (states('sensor.induccion_power') | int) + (states('sensor.microondas_power') | int) + (states('sensor.lavadora_power') | int) + (states('sensor.secadora_power') | int) + (states('sensor.lavavajillas_power') | int) + (states('sensor.nevera_power') | int)) | round(0) }}"
+        value_template: "{{ ((states('sensor.horno_power') | int) + (states('sensor.induccion_power_adjust') | int) + (states('sensor.microondas_power') | int) + (states('sensor.lavadora_power') | int) + (states('sensor.secadora_power') | int) + (states('sensor.lavavajillas_power') | int) + (states('sensor.nevera_power') | int)) | round(0) }}"
         friendly_name: 'Electrodomésticos'
 
       electrodomesticos_energy_today:
@@ -358,7 +367,7 @@ sensor:
 
       informatica_energy:
         unit_of_measurement: kWh
-        value_template: "{{ ((states('sensor.pc_despacho_energy') | int) + (states('sensor.pc_albert_energy') | int) + (states('sensor.pc_agusti_energy') | int)) | round(0) }}"
+        value_template: "{{ ((states('sensor.pc_despacho_energy') | float) + (states('sensor.pc_albert_energy') | float) + (states('sensor.pc_agusti_energy') | float)) | round(1) }}"
         friendly_name: 'Informática energía'
 
 
@@ -531,12 +540,7 @@ sensor:
   - platform: template
     sensors:
       balance_neto_horario:
-        value_template: >-
-          {% if (states('sensor.grid_energy_returned_hour') | float) > (states('sensor.grid_energy_returned') | float) %}
-            {{ ((states('sensor.to_grid_hour') | float) - (states('sensor.from_grid_hour') | float)) | round(1) }}
-          {% else %}
-            {{ ((states('sensor.to_grid_hour') | float) - (states('sensor.from_grid_hour') | float)) | round(1) }}
-          {% endif %}
+        value_template: "{{ ((states('sensor.to_grid_hour') | float) - (states('sensor.from_grid_hour') | float)) | round(2) }}"
         friendly_name: 'Balance neto horario'
         unit_of_measurement: kWh
 
