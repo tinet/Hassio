@@ -3,7 +3,7 @@ default_config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
-  base_url: !secret http_base_url
+#  base_url: !secret http_base_url
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
   ip_ban_enabled: True
@@ -15,12 +15,12 @@ tts:
 
 homeassistant:
   customize: !include customize.yaml
+  packages: !include_dir_named packages
 
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-
 
 
 
@@ -31,17 +31,16 @@ scene: !include scenes.yaml
 #--------------------------------------------------------------------------------------------------------------------------------
 
 logger:
-  default: critical
+  default: warn
+  logs:
+    custom_components.fronius_basic: debug
+#    custom_components.fronius_inverter: debug
+#    homeassistant.components.mqtt: debug
   
 # database to memory not disk
 recorder:
   purge_keep_days: 5
   db_url: 'sqlite:///:memory:'  # Set database to use memory, not SD card
-
-#  logs:  
-#    custom_components.fronius_basic: debug
-#    custom_components.fronius_inverter: debug
-#    homeassistant.components.mqtt: debug
 
 
 
@@ -55,20 +54,6 @@ recorder:
 google_assistant:
   project_id: !secret google_assistant_project_id
   service_account: !include service_account.json
-
-
-
-
-#--------------------------------------------------------------------------------------------------------------------------------
-#
-#                                                         WEATHER
-#
-#--------------------------------------------------------------------------------------------------------------------------------
-    
-weather:
-  - platform: openweathermap
-    name: Home
-    api_key: !secret weather_api_key
 
 
 
@@ -181,32 +166,6 @@ switch:
 #--------------------------------------------------------------------------------------------------------------------------------
 
 sensor:
-
-#------------------------------------------------------  FRONIUS BASIC  -----------------------------------------------------------
-  - platform: fronius_basic
-    ip_address: 192.168.1.6
-    name: 'Fronius'
-    scan_interval: 10
-    
-# Fronius sensor's list:
-#   fronius_solar
-#   fronius_energy_today
-#   fronius_house_load
-#   fronius_grid_injection (- from grid , + to grid)
-#   fronius_self_consumption
-#   fronius_inverter_1
-#        ...
-#   fronius_inverter_n
-
-
-#------------------------------------------------------  FRONIUS INVERTER  --------------------------------------------------------
-#  - platform: fronius_inverter
-#    ip_address: 192.168.1.6
-#    monitored_conditions:
-#      - dc_current
-#      - dc_voltage
-
-
 #------------------------------------------------------  PV  -----------------------------------------------------------
   - platform: template
     sensors: 
