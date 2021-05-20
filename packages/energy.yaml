@@ -1,0 +1,244 @@
+sensor:
+# ----------------------------------------  MIDNIGHT ---------------------------------------- 
+# appliances midnight
+  - platform: mqtt
+    state_topic: ha/induccion_energy_midnight
+    name: 'induccion_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.induccion_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/horno_energy_midnight
+    name: 'horno_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.horno_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/microondas_energy_midnight
+    name: 'microondas_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.microondas_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/lavadora_energy_midnight
+    name: 'lavadora_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.lavadora_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/secadora_energy_midnight
+    name: 'secadora_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.secadora_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/lavavajillas_energy_midnight
+    name: 'lavavajillas_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.lavavajillas_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/nevera_energy_midnight
+    name: 'nevera_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.nevera_energy_midnight }}'
+
+# freeds midnight
+  - platform: mqtt
+    state_topic: ha/iqas_energy_midnight
+    name: 'iqas_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.iqas_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/iqas_energy_yesterday
+    name: 'iqas_energy_yesterday'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.iqas_energy_yesterday }}'
+
+  - platform: mqtt
+    state_topic: ha/iqas_energy_before_yesterday
+    name: 'iqas_energy_before_yesterday'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.iqas_energy_before_yesterday }}'
+
+# ac midnight
+  - platform: mqtt
+    state_topic: ha/aire_salon_energy_midnight
+    name: 'aire_salon_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.aire_salon_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/aire_pasillo_energy_midnight
+    name: 'aire_pasillo_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.aire_pasillo_energy_midnight }}'
+
+  - platform: mqtt
+    state_topic: ha/aire_estudio_energy_midnight
+    name: 'aire_estudio_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.aire_estudio_energy_midnight }}'
+
+# it midnight
+  - platform: mqtt
+    state_topic: ha/informatica_energy_midnight
+    name: 'informatica_energy_midnight'
+    unit_of_measurement: kWh
+    value_template: '{{ value_json.informatica_energy_midnight }}'
+
+
+# ----------------------------------------  TODAY ---------------------------------------- 
+# appliances today
+  - platform: template
+    sensors:
+      induccion_energy_today:
+        value_template: >-
+          {% if (states('sensor.induccion_energy_midnight') | float) > (states('sensor.induccion_energy') | float) %}
+            {{ ((states('sensor.induccion_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.induccion_energy') | float) - (states('sensor.induccion_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Inducción hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      horno_energy_today:
+        value_template: >-
+          {% if (states('sensor.horno_energy_midnight') | float) > (states('sensor.horno_energy') | float) %}
+            {{ ((states('sensor.horno_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.horno_energy') | float) - (states('sensor.horno_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Horno + microondas hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      microondas_energy_today:
+        value_template: >-
+          {% if (states('sensor.microondas_energy_midnight') | float) > (states('sensor.microondas_energy') | float) %}
+            {{ ((states('sensor.microondas_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.microondas_energy') | float) - (states('sensor.microondas_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Thermomix + Nespresso hoy'
+        unit_of_measurement: kWh
+        
+  - platform: template
+    sensors:
+      lavadora_energy_today:
+        value_template: >-
+          {% if (states('sensor.lavadora_energy_midnight') | float) > (states('sensor.lavadora_energy') | float) %}
+            {{ ((states('sensor.lavadora_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.lavadora_energy') | float) - (states('sensor.lavadora_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Lavadora hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      secadora_energy_today:
+        value_template: >-
+          {% if (states('sensor.secadora_energy_midnight') | float) > (states('sensor.secadora_energy') | float) %}
+            {{ ((states('sensor.secadora_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.secadora_energy') | float) - (states('sensor.secadora_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Secadora hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      lavavajillas_energy_today:
+        value_template: >-
+          {% if (states('sensor.lavavajillas_energy_midnight') | float) > (states('sensor.lavavajillas_energy') | float) %}
+            {{ ((states('sensor.lavavajillas_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.lavavajillas_energy') | float) - (states('sensor.lavavajillas_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Lavavajillas hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      nevera_energy_today:
+        value_template: >-
+          {% if (states('sensor.nevera_energy_midnight') | float) > (states('sensor.nevera_energy') | float) %}
+            {{ ((states('sensor.nevera_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.nevera_energy') | float) - (states('sensor.nevera_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Nevera hoy'
+        unit_of_measurement: kWh
+
+# freeds today
+  - platform: template
+    sensors:
+      iqas_energy_today:
+        value_template: >-
+          {% if (states('sensor.iqas_energy_midnight') | float) > (states('sensor.iqas_energy') | float) %}
+            {{ ((states('sensor.iqas_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.iqas_energy') | float) - (states('sensor.iqas_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Energía hoy'
+        unit_of_measurement: kWh
+
+# ac today
+  - platform: template
+    sensors:
+      aire_salon_energy_today:
+        value_template: >-
+          {% if (states('sensor.aire_salon_energy_midnight') | float) > (states('sensor.aire_salon_energy') | float) %}
+            {{ ((states('sensor.aire_salon_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.aire_salon_energy') | float) - (states('sensor.aire_salon_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'AC salón hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      aire_pasillo_energy_today:
+        value_template: >-
+          {% if (states('sensor.aire_pasillo_energy_midnight') | float) > (states('sensor.aire_pasillo_energy') | float) %}
+            {{ ((states('sensor.aire_pasillo_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.aire_pasillo_energy') | float) - (states('sensor.aire_pasillo_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'AC pasillo hoy'
+        unit_of_measurement: kWh
+
+  - platform: template
+    sensors:
+      aire_estudio_energy_today:
+        value_template: >-
+          {% if (states('sensor.aire_estudio_energy_midnight') | float) > (states('sensor.aire_estudio_energy') | float) %}
+            {{ ((states('sensor.aire_estudio_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.aire_estudio_energy') | float) - (states('sensor.aire_estudio_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'AC estudio hoy'
+        unit_of_measurement: kWh
+
+# it today
+  - platform: template
+    sensors:
+      informatica_energy_today:
+        value_template: >-
+          {% if (states('sensor.informatica_energy_midnight') | float) > (states('sensor.informatica_energy') | float) %}
+            {{ ((states('sensor.informatica_energy') | float)) | round(1)}}
+          {% else %}
+            {{ ((states('sensor.informatica_energy') | float) - (states('sensor.informatica_energy_midnight') | float)) | round(1)}}
+          {% endif %}
+        friendly_name: 'Informática hoy'
+        unit_of_measurement: kWh        
+
+
+
+
+#------------------------------------------------------  END OF DOCUMENT  ---------------------------------------------------------

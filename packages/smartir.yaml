@@ -1,0 +1,29 @@
+smartir:
+    update_branch: rc
+    
+climate:
+  - platform: smartir
+    name: Aire estudio
+    device_code: 1065
+    controller_data: cmnd/mando_estudio/irsend
+    temperature_sensor: sensor.aire_estudio_temperature
+    humidity_sensor: sensor.aire_estudio_humidity
+
+  - platform: smartir
+    name: Aire pasillo
+    device_code: 1261
+    controller_data: cmnd/mando_pasillo/irhvac
+    temperature_sensor: sensor.aire_pasillo_temperature
+    humidity_sensor: sensor.aire_pasillo_humidity
+
+  - platform: smartir
+    name: Aire salón
+    device_code: 1261
+    controller_data: cmnd/mando_salon/irhvac
+    temperature_sensor: sensor.aire_salon_temperature
+    humidity_sensor: sensor.aire_salon_humidity
+
+
+
+
+#------------------------------------------------------  END OF DOCUMENT  ---------------------------------------------------------

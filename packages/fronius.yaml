@@ -2,7 +2,14 @@ sensor:
 #------------------------------------------------------  FRONIUS BASIC  -----------------------------------------------------------
   - platform: fronius_basic
     ip_address: 192.168.1.6
-    scan_interval: 4
+    scan_interval: 2
+
+  - platform: template
+    sensors: 
+      fronius_self_energy_today:
+        unit_of_measurement: kWh
+        value_template: "{{ ((states('sensor.fronius_pv_energy_today') | float) - (states('sensor.fronius_grid_returned_energy_today') | float)) | round(3) }}"
+        friendly_name: 'Autoconsumida'
 
 
 

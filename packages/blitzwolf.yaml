@@ -1,0 +1,58 @@
+switch:
+  - platform: mqtt
+    name: Iqas
+    state_topic: iqas/relay/0
+    command_topic: iqas/relay/0/set
+    payload_on: 1
+    payload_off: 0
+    availability_topic: iqas/status
+    payload_available: 1
+    payload_not_available: 0
+
+  - platform: mqtt
+    name: pastor
+    state_topic: pastor/relay/0
+    command_topic: pastor/relay/0/set
+    payload_on: 1
+    payload_off: 0
+    availability_topic: pastor/status
+    payload_available: 1
+
+  - platform: mqtt
+    name: tv_kitchen
+    state_topic: tv_kitchen/relay/0
+    command_topic: tv_kitchen/relay/0/set
+    payload_on: 1
+    payload_off: 0
+    availability_topic: tv_kitchen/status
+    payload_available: 1
+    payload_not_available: 0
+
+
+sensor:
+# Blitzwolf Freeds (212)
+  - platform: mqtt
+    name: iqas_power
+    state_topic: iqas/power
+    unit_of_measurement: W
+  - platform: mqtt
+    name: iqas_energy
+    state_topic: iqas/energy
+    unit_of_measurement: kWh
+
+# Blitzwolf Pastor (211)
+  - platform: mqtt
+    name: pastor_power
+    state_topic: pastor/power
+    unit_of_measurement: W
+ 
+# Blitzwolf TV kitchen (213)
+  - platform: mqtt
+    name: tv_kitchen_power
+    state_topic: tv_kitchen/power
+    unit_of_measurement: W
+
+
+
+
+#------------------------------------------------------  END OF DOCUMENT  ---------------------------------------------------------

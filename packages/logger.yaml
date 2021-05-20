@@ -1,0 +1,11 @@
+logger:
+  default: warn
+#  logs:
+#    custom_components.fronius_basic: debug
+#    custom_components.fronius_inverter: debug
+#    homeassistant.components.mqtt: debug
+
+
+
+
+#------------------------------------------------------  END OF DOCUMENT  ---------------------------------------------------------
