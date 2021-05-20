@@ -16,7 +16,7 @@ views:
             min: 0
             max: 100
             outer:
-              entity: sensor.pv_self_sufficient
+              entity: sensor.fronius_self_sufficiency
               label: suf
               unit: '%'
               colors:
@@ -27,48 +27,58 @@ views:
                 - color: var(--label-badge-red)
                   value: 0
             inner:
-              entity: sensor.pv_self_consumption
+              entity: sensor.fronius_self_consumption
               label: con
               unit: '%'
               colors:
                 - color: var(--label-badge-green)
                   value: 0
                 - color: var(--label-badge-yellow)
-                  value: 80
+                  value: 99
                 - color: var(--label-badge-red)
-                  value: 90
+                  value: 100
           - type: gauge
             max: 6
-            entity: sensor.balance_neto_horario
+            entity: sensor.fronius_balance_neto_hour
             severity:
               green: 0
               yellow: -1
               red: -5
             min: -6
+            name: Balance neto horario
           - type: gauge
             min: 0
             max: 7000
-            entity: sensor.pv_power
+            entity: sensor.fronius_pv_power
             severity:
               green: 4000
               yellow: 2000
               red: 0
+            name: Producción solar
       - entities:
-          - entity: sensor.pv_house_load
+          - entity: sensor.fronius_house_power
             icon: 'mdi:gauge'
             name: Consumo vivienda
-          - entity: sensor.pv_grid_consumption
+          - entity: sensor.fronius_grid_power
             icon: 'mdi:gauge'
             name: Consumo red
-          - entity: sensor.grid_energy_today
+          - entity: sensor.fronius_house_energy_today
+            name: Vivienda
+          - entity: sensor.fronius_grid_energy_today
             icon: 'mdi:transmission-tower'
             name: Red
-          - entity: sensor.pv_energy_auto_today
+          - entity: sensor.fronius_self_energy_today
             icon: 'mdi:transmission-tower'
-            name: Autoconsumida
-          - entity: sensor.grid_energy_returned_today
+          - entity: sensor.fronius_grid_returned_energy_today
             icon: 'mdi:transmission-tower'
             name: Vertida
+          - entity: sensor.fronius_balance_neto_today
+            name: Balance neto
+          - entity: sensor.fronius_pv_energy_today
+            icon: 'mdi:solar-panel'
+            name: Producida
+          - entity: sensor.grid_voltage
+            name: Tensión entrada
           - entity: switch.calefaccion
             icon: 'mdi:power-plug'
             name: Calefacción
@@ -107,44 +117,6 @@ views:
       - entity: weather.openweathermap
         type: weather-forecast
         name: La Garriga
-  - title: PV
-    path: pv
-    visible:
-      - user: 0b501aacecfb42bba904a2e4e4a68859
-      - user: 6117ab5599b94381b0d5b14cccd42e3c
-    badges: []
-    cards:
-      - entities:
-          - entity: sensor.pv_power
-            icon: 'mdi:gauge'
-            name: Total
-          - entity: sensor.fronius_power_round
-            name: Fronius
-            icon: 'mdi:solar-panel-large'
-          - entity: sensor.ap_qs1_power_round
-            name: APsystems
-            icon: 'mdi:solar-panel'
-        title: Producción
-        type: entities
-      - entities:
-          - entity: sensor.pv_energy_today
-            icon: 'mdi:transmission-tower'
-            name: Total
-          - entity: sensor.fronius_energy_today
-            icon: 'mdi:transmission-tower'
-            name: Fronius
-          - entity: sensor.ap_qs1_energy_today
-            name: APsystems
-            icon: 'mdi:transmission-tower'
-        title: Energía Producida
-        type: entities
-      - entities:
-          - entity: sensor.grid_voltage
-            name: Tensión entrada
-          - entity: sensor.fronius_voltage
-            name: Tensión cuadro inversor
-        title: Voltajes
-        type: entities
   - title: ELE
     path: ele
     visible:
@@ -233,12 +205,12 @@ views:
     cards:
       - type: entities
         entities:
-          - entity: switch.pastor_2
-            name: Pastor
+          - entity: switch.pastor
             icon: 'mdi:power-plug'
-          - entity: sensor.pastor_power_2
+            name: Jardín
+          - entity: sensor.pastor_power
             icon: 'mdi:gauge'
-            name: Pastor
+            name: Jardín
       - type: sensor
         entity: sensor.temperaturas_jardin_temperature
         graph: line
@@ -363,4 +335,34 @@ views:
         title: Radiador
         type: entities
         show_header_toggle: false
+  - title: FRONIUS
+    path: test
+    badges: []
+    cards:
+      - entities:
+          - entity: sensor.fronius_house_energy_hour
+            name: Vivienda
+          - entity: sensor.fronius_grid_energy_hour
+            name: Red
+          - entity: sensor.fronius_grid_returned_energy_hour
+            name: Vertida
+        type: entities
+        show_header_toggle: false
+        title: Energía Horaria
+      - type: entities
+        entities:
+          - entity: sensor.fronius_house_energy_today
+            name: Vivienda
+          - entity: sensor.fronius_self_energy_today
+            icon: 'mdi:transmission-tower'
+          - entity: sensor.fronius_grid_energy_today
+            name: 'Red '
+          - entity: sensor.fronius_grid_returned_energy_today
+            name: Vertida
+          - entity: sensor.fronius_balance_neto_today
+            name: Balance neto
+          - entity: sensor.fronius_pv_energy_today
+            icon: 'mdi:solar-panel'
+            name: Producida
+        title: Energía diaria
 
