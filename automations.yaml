@@ -78,7 +78,7 @@
   - entity_id: switch.iqas
     service: switch.turn_off
 - id: '1578658322715'
-  alias: Tareas medianoche
+  alias: Save energy counters on midnight
   description: 'Guarda el valor actual de los contadores de energia '
   trigger:
   - at: 00:00:00
@@ -152,18 +152,6 @@
       topic: ha/nevera_energy_midnight
     service: mqtt.publish
   - data:
-      payload_template: '{"fronius_energy_midnight": "{{ states("sensor.fronius_energy")
-        }}"}'
-      retain: true
-      topic: ha/fronius_energy_midnight
-    service: mqtt.publish
-  - data:
-      payload_template: '{"ap_qs1_energy_midnight": "{{ states("sensor.ap_qs1_energy")
-        }}"}'
-      retain: true
-      topic: ha/ap_qs1_energy_midnight
-    service: mqtt.publish
-  - data:
       payload_template: '{"induccion_energy_midnight": "{{ states("sensor.induccion_energy")
         }}"}'
       retain: true
@@ -174,18 +162,6 @@
         }}"}'
       retain: true
       topic: ha/horno_energy_midnight
-    service: mqtt.publish
-  - data:
-      payload_template: '{"grid_energy_midnight": "{{ states("sensor.grid_energy")
-        }}"}'
-      retain: true
-      topic: ha/grid_energy_midnight
-    service: mqtt.publish
-  - data:
-      payload_template: '{"grid_energy_returned_midnight": "{{ states("sensor.grid_energy_returned")
-        }}"}'
-      retain: true
-      topic: ha/grid_energy_returned_midnight
     service: mqtt.publish
   - data:
       payload_template: '{"informatica_energy_midnight": "{{ states("sensor.informatica_energy")
@@ -223,9 +199,7 @@
   - data:
       disable_notification: false
       disable_web_page_preview: true
-      message: '{{ states("sensor.pv_energy_today") }} kWh producidos hoy {{ ''\n''
-        }}{{ ''\n'' }}Fronius:       {{ states("sensor.fronius_energy_today") }} kWh
-        {{ ''\n'' }}APsystems: {{states("sensor.ap_qs1_energy_today") }} kWh'
+      message: '{{ states("sensor.fronius_pv_energy_today_2") }} kWh producidos hoy'
       parse_mode: markdown
       target: '217984856'
     service: telegram_bot.send_message
@@ -482,7 +456,7 @@
   - minutes: /30
     platform: time_pattern
   condition:
-  - after: '11: 50'
+  - after: '11:50'
     before: '23:00'
     condition: time
   - above: '5'
